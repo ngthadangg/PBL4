@@ -18,4 +18,14 @@ Requirement already satisfied: six in c:\users\admin\appdata\local\programs\pyth
 
 C:\Users\Admin>py -m show pynput
 C:\Users\Admin\AppData\Local\Programs\Python\Python312\python.exe: No module named show
-
+C:\Users\Admin>py -m pip show pynput
+Name: pynput
+Version: 1.7.6
+Summary: Monitor and control user input devices
+Home-page: https://github.com/moses-palmer/pynput
+Author: Moses Palmér
+Author-email: moses.palmer@gmail.com
+License: LGPLv3
+Location: C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\site-packages
+Requires: six
+Required-by:
