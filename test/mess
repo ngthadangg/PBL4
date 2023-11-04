@@ -1,2 +1,11 @@
 'pip' is not recognized as an internal or external command,
 operable program or batch file.
+
+
+C:\Users\Admin>py -m pip --version
+pip 23.2.1 from C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\site-packages\pip (python 3.12)
+
+C:\Users\Admin>pip install pynput
+'pip' is not recognized as an internal or external command,
+operable program or batch file.
+
