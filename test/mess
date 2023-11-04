@@ -29,3 +29,9 @@ License: LGPLv3
 Location: C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\site-packages
 Requires: six
 Required-by:
+
+PS D:\PBL4> & C:/Users/Admin/AppData/Local/Programs/Python/Python310/python.exe d:/PBL4/victim.pyw
+Traceback (most recent call last):
+  File "d:\PBL4\victim.pyw", line 1, in <module>
+    from  pynput.keyboard import Listener
+ModuleNotFoundError: No module named 'pynput'
