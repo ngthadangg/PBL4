@@ -13,7 +13,7 @@ def on_press(key):
     if key == "Key.alt_l":
         key = ""
     if key == "Key.tab":
-        key = "\t";
+        key = "\t"
     if key == "Key.enter":
         key = "\n"
     if key == "Key.space":

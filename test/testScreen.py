@@ -10,5 +10,7 @@ nameScreen = "D:\\screenshot"+ now.strftime("%H%M%S") +".png"
 pyautogui.screenshot(nameScreen)
 # we can then load our screenshot from disk in OpenCV format
 image = cv2.imread(nameScreen)
+
+# Hiển thị ảnh
 cv2.imshow("hacker.com", imutils.resize(image))
 cv2.waitKey(0) #wait for keyboard press

