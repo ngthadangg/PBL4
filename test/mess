@@ -139,3 +139,29 @@ ERROR: No matching distribution found for cv2
 [notice] To update, run: C:\Users\Admin\AppData\Local\Programs\Python\Python312\python.exe -m pip install --upgrade pip
 
 
+code:
+import imutils
+import pyautogui
+import cv2
+from datetime import datetime
+
+now = datetime.now()
+nameScreen = "D:\\screenshot"+ now.strftime("%H%M%S") +".png"
+
+# Another Type
+pyautogui.screenshot(nameScreen)
+# we can then load our screenshot from disk in OpenCV format
+image = cv2.imread(nameScreen)
+cv2.imshow("hacker.com", imutils.resize(image))
+cv2.waitKey(0) #wait for keyboard press
+
+
+Lỗi:
+Traceback (most recent call last):
+  File "d:\PBL4\main\Screen.py", line 10, in <module>
+    pyautogui.screenshot(nameScreen)
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\site-packages\pyautogui\__init__.py", line 228, in _couldNotImportPyScreeze
+    raise PyAutoGUIException(
+pyautogui.PyAutoGUIException: PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) do
+esn't support currently.) Please install this module to enable the function you tried to call.
+
