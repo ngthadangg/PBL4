@@ -109,3 +109,23 @@ Traceback (most recent call last):
     clientSocket.send(key)
 TypeError: a bytes-like object is required, not 'str'
 
+
+import socket
+
+# Tạo một đối tượng socket
+client_socket = socket.socket()
+
+# Kết nối đến server
+client_socket.connect(("server_ip", server_port))
+
+# Mở file ảnh ở chế độ đọc dạng byte
+with open("path_to_your_image.jpg", "rb") as image:
+    # Đọc dữ liệu từ file ảnh
+    data = image.read()
+
+    # Gửi dữ liệu đến server
+    client_socket.send(data)
+
+# Đóng kết nối
+client_socket.close()
+
