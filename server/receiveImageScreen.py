@@ -39,9 +39,9 @@ with open(nameScreen, "wb") as image:
     image.close()
 
 
-# # Hiển thị ảnh
-# cv2.imshow("hacker.com", imutils.resize(image))
-# cv2.waitKey(0) #wait for keyboard press
+# Hiển thị ảnh
+cv2.imshow("hacker.com", imutils.resize(image))
+cv2.waitKey(0) #wait for keyboard press
 
 # Đóng kết nối
 clientSocket.close()
