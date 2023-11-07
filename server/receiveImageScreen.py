@@ -1,47 +1,36 @@
-import socket			 
+import socket
 from datetime import datetime
-import imutils
-import pyautogui
 import cv2
-now = datetime.now()
+import numpy as np
 
-nameScreen = "D:\\screenshot"+ now.strftime("%H%M%S") +".png"
+serverSocket = socket.socket()
+print("Socket successfully created")
 
-serverSocket = socket.socket()		 
-print ("Socket successfully created")
+port = 12345
+serverSocket.bind(('', port))
+serverSocket.listen(5)
+print("Socket is listening on " + str(port))
 
-port = 12345			
-
-serverSocket.bind(('', port))		 
-# print ("socket binded to %s" %(port)) 
-
-serverSocket.listen(5)	 
-print ("socket is listening in " + str(port))		
-
-# Chấp nhận kết nối từ client
 clientSocket, clientAddress = serverSocket.accept()
 
 # Nhận kích thước của file ảnh từ client
 file_size = int(clientSocket.recv(1024).decode())
-print(file_size)
+
 # Nhận dữ liệu từ client
-data = clientSocket.recv(1024)
+received_data = b""
+while len(received_data) < file_size:
+    data = clientSocket.recv(1024)
+    received_data += data
 
-# Mở một file ảnh mới để lưu dữ liệudd
-with open(nameScreen, "wb") as image:
-    received_size = 0
-    while received_size < file_size:
-        data = clientSocket.recv(1024)
-        if not data:
-            break  
-        image.write(data)
-        received_size += len(data)
-    image.close()
+# Chuyển dữ liệu nhận được thành mảng hình ảnh
+image_array = np.frombuffer(received_data, dtype=np.uint8)
 
+# Đọc mảng hình ảnh thành hình ảnh OpenCV
+image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
 
-# Hiển thị ảnh
-cv2.imshow("hacker.com", imutils.resize(image))
-cv2.waitKey(0) #wait for keyboard press
+# Hiển thị hình ảnh
+cv2.imshow("hacker.com", image)
+cv2.waitKey(0)  # Đợi nhấn một phím bất kỳ để đóng cửa sổ hiển thị
 
 # Đóng kết nối
 clientSocket.close()
