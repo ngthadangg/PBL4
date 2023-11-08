@@ -1,4 +1,0 @@
-heheh_hihi_heloo_ae]
-minh_la_thanh_dang_=Key.backspaceKey.backspace\x03\x16Key.backspaceKey.backspace\x03\x16\\Key.backspaceKey.backspaceKey.backspaceKey.backspaceKey.deleteKey.backspaceKey.backspaceKey.backspaceKey.backspaceKey.backspaceKey.backspaceKey.backspaceKey.backspaceKey.backspace\x13
-
-Key.backspaceKey.backspaceKey.delete=<187><189>

