@@ -7,21 +7,12 @@ serverSocket = socket.socket()
 print("Socket successfully created")
 
 port = 12345
+serverSocket.bind(('', port))
+serverSocket.listen(5)
 
-def shutdown():
-        serverSocket.bind(('', port))
-        serverSocket.listen(5)
-        # print("Socket is listening on " + str(port))
+clientSocket, clientAddress = serverSocket.accept()
+def shutdown_computer():
+    clientSocket.send('shutdown'.encode()) 
 
-        clientSocket, clientAddress = serverSocket.accept()
-        
-        clientSocket.send('shutdown'.encode()) 
-
-def restart():
-        serverSocket.bind(('', port))
-        serverSocket.listen(5)
-        # print("Socket is listening on " + str(port))
-
-        clientSocket, clientAddress = serverSocket.accept()
-        
-        clientSocket.send('restart'.encode()) 
+def restart_computer():       
+    clientSocket.send('restart'.encode()) 

