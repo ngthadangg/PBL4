@@ -1,21 +1,24 @@
-from flask import Flask, render_template
-from flask_websockets import SocketIO
+from flask import Flask, app, request
+import sqlite3
 
-app = Flask(__name__)
-sio = SocketIO(app)
+app.config['DATABASE'] = 'database.db'
 
-@sio.on('connect')
-def connect(sid, environ):
-    print('Client connected:', sid)
+def connect_db():
+    return sqlite3.connect(app.config['DATABASE'])
 
-@sio.on('disconnect')
-def disconnect(sid):
-    print('Client disconnected:', sid)
+@app.route('/api', methods=['POST'])
+def receive_message():
+    data = request.get_json()
+    message = data.get('message')
 
-@sio.on('keyPress')
-def keyPress(sid, data):
-    # Replace 'print(data)' with sending data to the web page
-    print(data)
+    # Lưu thông điệp vào cơ sở dữ liệu
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO messages (message) VALUES (?)', (message,))
+    conn.commit()
+    conn.close()
+
+    return 'Message received and saved to database!'
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=12345)
+    app.run(debug=True)

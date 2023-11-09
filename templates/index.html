@@ -57,7 +57,7 @@
 <body>
     <nav>
         <h2>KidLogger</h2>
-        <a href="#" onclick="loadPage('')">Giám sát bàn phím</a>
+        <a href="abc" onclick="loadPage('')">Giám sát bàn phím</a>
         <a href="#" onclick="loadPage('')" >Giám sát màn hình</a>
         <a href="#" onclick="loadPage('')">Điều khiển máy tính</a>
         <a href="#" onclick="loadPage('')">Thống kê</a>
@@ -66,6 +66,7 @@
 
     <script>
         function loadPage(page) {
+            
             var iframe = document.getElementById('content');
             iframe.src = page;
         }

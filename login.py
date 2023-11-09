@@ -2,7 +2,7 @@ from flask import Flask, request, render_template
 import sqlite3
 import os
 
-app = Flask(__name__, template_folder='templates')  # Specify the template folder explicitly
+app = Flask(__name__)  # Specify the template folder explicitly
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -25,9 +25,14 @@ def login():
         conn.close()
 
         if user:
-            return "Đăng nhập thành công!"
+            return render_template('index.html')
+            # return "Đăng nhập thành công!"
         else:
             return "Đăng nhập không thành công. Vui lòng kiểm tra lại tên người dùng và mật khẩu."
+    return render_template('login.html')
+@app.route('/abc', methods=['GET', 'POST'])
+def login1():
+   
     return render_template('login.html')
 
 if __name__ == '__main__':
