@@ -30,10 +30,27 @@ def login():
         else:
             return "Đăng nhập không thành công. Vui lòng kiểm tra lại tên người dùng và mật khẩu."
     return render_template('login.html')
-@app.route('/abc', methods=['GET', 'POST'])
-def login1():
-   
-    return render_template('login.html')
+
+@app.route('/keylogger')
+def keylogger():
+    # Xử lý logic cho chức năng "Giám sát bàn phím" ở đây
+    return render_template('keylogger.html')  
+
+@app.route('/screenshots')
+def screenshots():
+    # Xử lý logic cho chức năng "Giám sát bàn phím" ở đây
+    return render_template('screenshots.html')  
+
+@app.route('/remote-control')
+def remoteControl():
+    # Xử lý logic cho chức năng "Giám sát bàn phím" ở đây
+    return render_template('remote-control.html')  
+
+@app.route('/statistics')
+def statistics():
+    # Xử lý logic cho chức năng "Giám sát bàn phím" ở đây
+    return render_template('statistics.html')  
+
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=8080)
