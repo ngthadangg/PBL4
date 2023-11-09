@@ -1,7 +1,6 @@
 import socket			 
 
 serverSocket = socket.socket()		 
-# print ("Socket successfully created")
 
 port = 8082
 keyLogger_data = ['thanks']			

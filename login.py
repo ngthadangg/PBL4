@@ -8,7 +8,8 @@ from server.receiveImageScreen import screenshots as parent_screenshots
 from server.remoteControl import shutdown_computer, restart_computer
 
 
-app = Flask(__name__)  # Specify the template folder explicitly
+app = Flask(__name__) 
+
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -74,12 +75,15 @@ def remoteControl():
  
 @app.route('/shutdown', methods=['POST'])
 def shutdown_route():
-    remoteControl.shutdown_computer()
+    thread = threading.Thread(target=shutdown_computer)
+    thread.daemon = True
+    thread.start()
     
 @app.route('/restart', methods=['POST'])
 def restart_route():
-    remoteControl.restart_computer()
-
+    thread = threading.Thread(target=restart_computer)
+    thread.daemon = True
+    thread.start()
     
 @app.route('/app-history')
 def appHistory():
@@ -94,4 +98,4 @@ def statistics():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8080)
+    app.run(debug=True, port=8000)

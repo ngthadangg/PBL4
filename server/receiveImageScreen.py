@@ -4,7 +4,6 @@ import cv2
 import numpy as np
 
 serverSocket = socket.socket()
-print("Socket successfully created")
 
 port = 12345
 def screenshots():
