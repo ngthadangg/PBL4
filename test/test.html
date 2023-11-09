@@ -46,17 +46,8 @@
     </head>
     <body style="text-align:center; padding-top: 50px;">
 
-        <button class="button" id="shutdown" onclick = "shutdown()">Shutdown</button>
-        <button class="button" id="restart" onclick = "action()">Restart</button>
+        <button class="button" id="shutdown">Shutdown</button>
+        <button class="button" id="restart">Restart</button>
 
-        <script>
-            function shutdown() {
-                fetch('/shutdown', { method: 'POST' });
-            }
-            
-            function restart() {
-                fetch('/restart', { method: 'POST' });
-            }
-            </script>
     </body>
 </html>

