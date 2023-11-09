@@ -14,9 +14,16 @@
                 margin: 0;
             }
         </style>
+        <script>
+            setInterval(function() {
+                var keyloggerData = "{{ keylogger_data }}";  // Dữ liệu từ biến Python được chuyển thành chuỗi JSON
+                // Hiển thị dữ liệu trong một phần tử có id là "keylogger-data"
+                document.getElementById("keylogger-data").innerText = keyloggerData;
+            }, 1000);  // Cập nhật mỗi giây
+        </script>
     </head>
     <body>
-        <h1>{{dataTest}}</h1>
+        <div id="keylogger-data"></div>
     </body>
 
 </html>

