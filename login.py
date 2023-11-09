@@ -80,8 +80,7 @@ def shutdown():
 def shutdown():
     restart()
 
-def restart():
-    os.system('shutdown -r')
+    
 @app.route('/app-history')
 def appHistory():
     # Xử lý logic cho chức năng "Giám sát bàn phím" ở đây
