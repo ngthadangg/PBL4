@@ -14,23 +14,10 @@
                 margin: 0;
             }
         </style>
-        <script>
-            function fetchDataAndUpdate() {
-                // Lấy dữ liệu từ máy chủ
-                fetch('/plain_text_data')
-                    .then(response => response.text())
-                    .then(data => {
-                        // Cập nhật dữ liệu trên view
-                        document.getElementById('keyLoggerData').innerText = data;
-                    });
-            }
-    
-            // Cập nhật dữ liệu sau mỗi 5 giây
-            setInterval(fetchDataAndUpdate, 2000);
-        </script>
     </head>
     <body>
         <div id="keyLoggerData"></div>
+        {{ dataResponse }}
     </body>
 
 </html>

