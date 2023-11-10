@@ -9,7 +9,7 @@ import os
 clientSocket = socket.socket( socket.AF_INET, socket.SOCK_STREAM)
 
 serverParrent = '192.168.1.10'
-serverPort = 12345
+serverPort = 8000
 clientSocket.connect((serverParrent, serverPort))
 messager = clientSocket.recv(1024).decode('utf-8')
 
