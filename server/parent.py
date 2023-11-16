@@ -3,7 +3,7 @@ import threading
 
 # port = 8000
 keyLogger_data = []
-port = 8000
+port = 8080
 stop_flag = False  # Cờ để kiểm soát việc dừng chương trình
 keylogger_thread = None 
     
