@@ -5,8 +5,11 @@ from firebase_admin import credentials, storage
 from datetime import datetime
 
 # Khởi tạo Firebase
-cred = credentials.Certificate("path/to/your/firebase/credentials.json")
-firebase_admin.initialize_app(cred, {"storageBucket": "your-firebase-bucket-url"})
+# cred = credentials.Certificate("path/to/your/firebase/credentials.json")
+# firebase_admin.initialize_app(cred, {"storageBucket": "your-firebase-bucket-url"})
+
+cred = credentials.Certificate("credentials.json")
+firebase_admin.initialize_app(cred, {"storageBucket": "gs://pbl4-09092003.appspot.com"})
 
 # Kết nối đến server
 server_address = ('192.168.1.10', 8080)  
