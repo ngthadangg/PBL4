@@ -5,28 +5,10 @@ import threading
 
 app = Flask(__name__)
 is_logged_in = False
-data_received = ""  # Define data_received as a global variable
-
-# server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# port = 8080
-
-
-# while True:
-#     try:
-#         server_socket.bind(('', port))
-#         break
-#     except OSError as e:
-#         if e.errno == 10048:  # Lỗi khi cổng đã được sử dụng
-#             port += 1
-#         else:
-#             raise
-
-# server_socket.listen(1)
-
+data_received = ""  
 
 def handle_client(client_socket,client_address):
-    global data_received  # Declare data_received as a global variable
-
+    global data_received  
     while True:
         try:
             # client_socket, client_address = server_socket.accept()
