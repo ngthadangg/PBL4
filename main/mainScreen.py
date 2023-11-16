@@ -12,7 +12,7 @@ cred = credentials.Certificate("credentials.json")
 firebase_admin.initialize_app(cred, {"storageBucket": "gs://pbl4-09092003.appspot.com"})
 
 # Kết nối đến server
-server_address = ('192.168.1.10', 8080)  
+server_address = ('192.168.1.6', 8080)  
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect(server_address)
 
