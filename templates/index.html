@@ -68,6 +68,14 @@
     <iframe id="content" style="width:100%;height:80vh;border:none;"></iframe>
 
     <script>
+        var isLoggedIn = {{ is_logged_in|tojson|safe }};
+        if (isLoggedIn) {
+            document.getElementById('content').style.display = 'block';
+            alert('Server đã được khởi tạo. Bạn có thể kết nối từ client.');
+        } else {
+            document.getElementById('content').style.display = 'none';
+        }
+        
         function loadPage(page) {
 
             var iframe = document.getElementById('content');

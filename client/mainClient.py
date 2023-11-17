@@ -7,7 +7,7 @@ import os
 
 clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-serverParent = '192.168.1.10'
+serverParent = '192.168.1.6'
 serverPort = 8080
 try:
     clientSocket.connect((serverParent, serverPort))
