@@ -108,7 +108,7 @@ def login():
                 # threading.Thread(target=handle_client).start()
                 socket_server_thread = threading.Thread(target=start_socket_server)
                 socket_server_thread.start()
-                return render_template('main.html', is_logged_in=is_logged_in)
+                return render_template('index.html', is_logged_in=is_logged_in)
             
             else:
                 return "Đăng nhập không thành công. Vui lòng kiểm tra lại tên người dùng và mật khẩu."

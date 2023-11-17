@@ -9,7 +9,7 @@ from datetime import datetime
 # firebase_admin.initialize_app(cred, {"storageBucket": "your-firebase-bucket-url"})
 
 cred = credentials.Certificate("credentials.json")
-firebase_admin.initialize_app(cred, {"storageBucket": "gs://pbl4-09092003.appspot.com"})
+firebase_admin.initialize_app(cred, {"storageBucket": "pbl4-09092003.appspot.com"})
 
 # Kết nối đến server
 server_address = ('192.168.1.6', 8080)  
