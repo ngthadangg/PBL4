@@ -125,6 +125,9 @@ def keylogger_router():
 def appHistory():
     # Xử lý logic cho chức năng "Giám sát lịch sử ứng dụng" ở đây
     return render_template('app-history.html')  
-
+@app.route('/remote-control')
+def remote_router():
+    # Xử lý logic cho chức năng "Điều khiển máy tính" ở đây
+    return render_template('remote-control.html')  
 if __name__ == '__main__':
     app.run(debug=True, port=8000)
