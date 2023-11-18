@@ -51,10 +51,11 @@ def takeScreenshot():
         link = blob.public_url
         print("Link: ",  link)
         clientSocket.send(link.encode('utf-8'))
-        # Generate a download URL
-        download_url = blob.generate_signed_url(expiration=300)  # Adjust expiration time as needed
-        print("Download URL: ", download_url)
-        clientSocket.send(download_url.encode('utf-8'))
+        
+        # # Generate a download URL
+        # download_url = blob.generate_signed_url(expiration=300)  # Adjust expiration time as needed
+        # print("Download URL: ", download_url)
+        # clientSocket.send(download_url.encode('utf-8'))
 
     except Exception as e:
         print("Error: " + str(e))
