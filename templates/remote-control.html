@@ -49,15 +49,39 @@
         <button class="button" id="shutdown" onclick = "shutdown()">Shutdown</button>
         <button class="button" id="restart" onclick = "restart()">Restart</button>
 
+        <div id="message-container"></div>
         <script>
             function shutdown() {
-                fetch('/remote-control', { method: 'POST', body: JSON.stringify({ action: 'shutdown' }) });
+                fetch('/remote-control', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ action: 'shutdown' }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Hiển thị thông báo từ dữ liệu nhận được từ server
+                    alert(data.message);                
+                });
             }
-            
+    
             function restart() {
-                fetch('/remote-control', { method: 'POST', body: JSON.stringify({ action: 'restart' }) });
+                fetch('/remote-control', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ action: 'restart' }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Hiển thị thông báo từ dữ liệu nhận được từ server
+                    alert(data.message);                
+                });
             }
         </script>
+        
         
     </body>
 </html>

