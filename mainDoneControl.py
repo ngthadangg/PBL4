@@ -151,7 +151,9 @@ def screenshots_router():
 
             image_url = client_socket.recv(1024).decode('utf-8')
             print("Received image URL:", image_url)
-
+            
+            # image_url_download = client_socket.recv(1024).decode('utf-8')
+            # print("Received image Download URL:", image_url_download)
         elif action == 'showScreenshots':
             print("showScreenshots")
 
