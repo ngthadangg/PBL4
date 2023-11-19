@@ -181,6 +181,23 @@ def screenshots_router():
             screenshots_list = get_screenshots_list()
             return jsonify({'screenshots_list': screenshots_list})
 
-    return render_template('screenshots.html')  
+    return render_template('screenshots.html')
+  
+@app.route('/app-history',methods=['GET','POST'])
+def appHistory_router():
+    if request.method == 'POST':
+        data = request.get_json()
+        action = data.get('action')
+        print("Action: " ,action)
+        
+        if action == 'getAppHistory':
+            client_socket.send('getAppHistory'.encode('utf-8'))
+
+        while True:
+            app = client_socket.recv(1024).decode('utf-8')
+            print(app)
+
+    return render_template('app-history.html')  
+
 if __name__ == '__main__':
     app.run(debug=True, port=8000)

