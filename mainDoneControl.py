@@ -2,6 +2,16 @@ import socket
 from flask import Flask, request, jsonify, render_template
 import sqlite3
 import threading
+from google.cloud import storage
+import firebase_admin
+from firebase_admin import credentials, storage
+
+# cred = credentials.Certificate("credentials.json")
+# firebase_admin.initialize_app(cred, {"storageBucket": "pbl4-09092003.appspot.com"})
+
+cred = credentials.Certificate("serviceAccountKey.json")
+firebase_admin.initialize_app(cred)
+
 
 app = Flask(__name__)
 is_logged_in = False
@@ -79,7 +89,20 @@ def start_socket_server():
         print(f"Server error: {str(e)}")
     finally:
         server_socket.close()
-        
+
+def get_screenshots_list():
+    # Lấy tham chiếu đến bucket
+    bucket = storage.bucket()
+
+    # Lấy danh sách tất cả các đối tượng trong bucket
+    blobs = list(bucket.list_blobs())
+    
+    # Lọc các đối tượng để chỉ lấy các ảnh chụp màn hình
+    screenshots_list = [blob.public_url for blob in blobs if blob.name.startswith("screenshot")]
+
+    return screenshots_list
+
+    
 @app.route('/', methods=['GET', 'POST'])
 def login():
     global is_logged_in  # Declare is_logged_in as a global variable
@@ -155,7 +178,8 @@ def screenshots_router():
             # image_url_download = client_socket.recv(1024).decode('utf-8')
             # print("Received image Download URL:", image_url_download)
         elif action == 'showScreenshots':
-            print("showScreenshots")
+            screenshots_list = get_screenshots_list()
+            return jsonify({'screenshots_list': screenshots_list})
 
     return render_template('screenshots.html')  
 if __name__ == '__main__':

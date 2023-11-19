@@ -83,8 +83,13 @@
           body: JSON.stringify({ action: 'showScreenshots' }),
         });
         const data = await response.json();
-        alert(data.message);  // Hiển thị thông báo từ dữ liệu nhận được từ server
-        document.getElementById('screenshot-iframe').src = 'https://console.firebase.google.com/project/pbl4-09092003/storage';
+        
+        if (data.screenshots_list) {
+          const firstScreenshot = data.screenshots_list[0];  // Assuming you want to display the first screenshot
+          document.getElementById('screenshot-iframe').src = firstScreenshot;
+        } else {
+            alert('No screenshots available.');
+        }
       } catch (error) {
         console.error('Error:', error);
       }
