@@ -32,7 +32,7 @@ def on_press(key):
 
 def takeScreenshot():
     now = datetime.now()
-    nameScreen = "Screenshot-" + now.strftime("%Y%m%d-%H%M%S") + ".png"
+    nameScreen = "screenshot-" + now.strftime("%Y%m%d-%H%M%S") + ".png"
     print("Name Screen: ", nameScreen)
     try:
         screenshot = pyautogui.screenshot()
