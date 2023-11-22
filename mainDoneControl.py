@@ -183,21 +183,25 @@ def screenshots_router():
 
     return render_template('screenshots.html')
   
-@app.route('/app-history',methods=['GET','POST'])
+@app.route('/history',methods=['GET','POST'])
 def appHistory_router():
+
     if request.method == 'POST':
         data = request.get_json()
         action = data.get('action')
         print("Action: " ,action)
         
-        if action == 'getAppHistory':
-            client_socket.send('getAppHistory'.encode('utf-8'))
+        if action == 'appHistory':
+            client_socket.send('appHistory'.encode('utf-8'))
+        elif action == 'webHistory':
+            client_socket.send('webHistory'.encode('utf-8'))
 
         while True:
             app = client_socket.recv(1024).decode('utf-8')
             print(app)
+            print("\n")
 
-    return render_template('app-history.html')  
+    return render_template('history.html')  
 
 if __name__ == '__main__':
     app.run(debug=True, port=8000)
