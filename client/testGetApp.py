@@ -1,4 +1,6 @@
 import psutil
+import time
+
 current_apps = set()
 while True:
     # Lấy danh sách các ứng dụng đang chạy
@@ -10,11 +12,14 @@ while True:
     for app in new_apps:
         # print(f"New App: {app}")
         app_new = "New App: {}".format(app)
+        print(app_new)
         # clientSocket.send(app_new.encode('utf-8'))
     
     for app in closed_apps:
         # print(f"Closed App: {app}")
         app_close = "Closed App: {}".format(app)
+        print(app_close)
         # clientSocket.send(app_close.encode('utf-8'))
     
     current_apps = running_apps        
+    time.sleep(1)

