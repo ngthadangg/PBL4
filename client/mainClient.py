@@ -13,7 +13,7 @@ firebase_admin.initialize_app(cred, {"storageBucket": "pbl4-09092003.appspot.com
 
 
 clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-serverParent = '192.168.1.10'
+serverParent = '192.168.1.5'
 serverPort = 8080
 
 
@@ -52,7 +52,8 @@ def takeScreenshot():
         blob.upload_from_filename(nameScreen)
         
         # Gửi link ảnh public  đến server
-        link = blob.public_url
+        # link = blob.public_url
+        link = blob.generate_signed_url(expiration= int(time.time()) + 3600) 
         print("Link: ",  link)
         clientSocket.send(link.encode('utf-8'))
         
