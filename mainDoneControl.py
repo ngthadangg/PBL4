@@ -193,14 +193,18 @@ def appHistory_router():
         
         if action == 'appHistory':
             client_socket.send('appHistory'.encode('utf-8'))
+            while True:
+                app = client_socket.recv(1024).decode('utf-8')
+                print(app, end = '\n')
+                return render_template('history.html', data=app) 
         elif action == 'webHistory':
             client_socket.send('webHistory'.encode('utf-8'))
+            while True:
+                web = client_socket.recv(1024).decode('utf-8')
+                print(web, end = '\n')
+                return render_template('history.html', data=web) 
 
-        while True:
-            app = client_socket.recv(1024).decode('utf-8')
-            print(app, end = '\n')
-
-    return render_template('history.html', data=app)  
+    return render_template('history.html')  
 
 if __name__ == '__main__':
     app.run(debug=True, port=8000)
