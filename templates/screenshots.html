@@ -56,11 +56,14 @@
       background-color: blue;
     }
 
-    #screenshot-iframe {
-      width: 80%;
-      height: 400px;
+
+    #imageContainer{
+      width:100%;
+      height:150vh;
       margin-top: 20px;
-      border: 1px solid #ccc;
+      border:none; 
+      overflow: auto;  
+      object-fit: contain;
     }
   </style>
 </head>
@@ -69,32 +72,13 @@
     <button class="button" id="showScreenshots" onclick="showScreenshots()">Show Screenshot</button>
     <button class="button" id="takeScreenshot" onclick="takeScreenshot()">Take Screenshot</button>
   </div>
-
-  <iframe id="screenshot-iframe" src="" frameborder="0" style="width:100%;height:90vh;border:none;"></iframe>
+  {% if image_url %}
+        <img id="screenshotImage" src="{{ image_url }}" alt="Screenshot">
+    {% else %}
+        <p>No screenshot available.</p>
+  {% endif %}
 
   <script>
-    async function showScreenshots() {
-      try {
-        const response = await fetch('/screenshots', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ action: 'showScreenshots' }),
-        });
-        const data = await response.json();
-        
-        if (data.screenshots_list) {
-          const firstScreenshot = data.screenshots_list[0];  // Assuming you want to display the first screenshot
-          document.getElementById('screenshot-iframe').src = firstScreenshot;
-        } else {
-            alert('No screenshots available.');
-        }
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    }
-
     async function takeScreenshot() {
       try {
         const response = await fetch('/screenshots', {
@@ -105,13 +89,14 @@
           body: JSON.stringify({ action: 'takeScreenshot' }),
         });
         const data = await response.json();
-        alert(data.message);  // Hiển thị thông báo từ dữ liệu nhận được từ server
-        var screenshotURL = 'URL_OF_CAPTURED_SCREENSHOT';
-        document.getElementById('screenshot-iframe').src = screenshotURL;
+        console.log("đã nhận được ảnh: ",data);
+        document.getElementById('screenshotImage').src = data.image_url;
       } catch (error) {
         console.error('Error:', error);
       }
     }
+
   </script>
 </body>
 </html>
+

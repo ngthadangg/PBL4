@@ -70,7 +70,9 @@
     <button class="button" id="webHistory" onclick="webHistory()">Show Web History</button>
   </div>
 
-  <iframe id="history-iframe" src="" frameborder="0" style="width:100%;height:90vh;border:none;"></iframe>
+  <div id="history-data">
+    {{ data }}
+  </div>
 
   <script>
     async function appHistory() {
@@ -83,7 +85,8 @@
           body: JSON.stringify({ action: 'appHistory' }),
         });
         const data = await response.json();
-        
+        console.log("Dũ liệu nhận được là: ",data);
+        document.getElementById('history-data').innerHTML = data;
       } catch (error) {
         console.error('Error:', error);
       }
@@ -98,6 +101,8 @@
           },
           body: JSON.stringify({ action: 'webHistory' }),
         });
+        const data = await response.json();
+        document.getElementById('history-data').innerHTML = data;
         
       } catch (error) {
         console.error('Error:', error);

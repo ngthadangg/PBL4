@@ -164,6 +164,7 @@ def remote_router():
  
 @app.route('/screenshots',methods=['GET','POST'])
 def screenshots_router():
+    image_url = ""
     if request.method == 'POST':
         data = request.get_json()
         action = data.get('action')
@@ -171,21 +172,20 @@ def screenshots_router():
         
         if action == 'takeScreenshot':
             client_socket.send('takeScreenshot'.encode('utf-8'))
-
-            image_url = client_socket.recv(1024).decode('utf-8')
-            print("Received image URL:", image_url)
             
-            # image_url_download = client_socket.recv(1024).decode('utf-8')
-            # print("Received image Download URL:", image_url_download)
-        elif action == 'showScreenshots':
-            screenshots_list = get_screenshots_list()
-            return jsonify({'screenshots_list': screenshots_list})
+            try:
+                image_url = client_socket.recv(1024).decode('utf-8')
+                print("Received image URL:", image_url)
+            except Exception as e:
+                print("Error receiving image URL:", str(e))
+            
+        return jsonify({'image_url': image_url})
 
-    return render_template('screenshots.html')
+    return render_template('screenshots.html', image_url=image_url)
   
 @app.route('/history',methods=['GET','POST'])
 def appHistory_router():
-
+    app = ""
     if request.method == 'POST':
         data = request.get_json()
         action = data.get('action')
@@ -198,10 +198,9 @@ def appHistory_router():
 
         while True:
             app = client_socket.recv(1024).decode('utf-8')
-            print(app)
-            print("\n")
+            print(app, end = '\n')
 
-    return render_template('history.html')  
+    return render_template('history.html', data=app)  
 
 if __name__ == '__main__':
     app.run(debug=True, port=8000)
