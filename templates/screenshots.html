@@ -22,6 +22,9 @@
       align-items: center;
       margin-top: 20px;
     }
+    ul{
+      list-style-type: none;
+    }
 
     .button {
       display: inline-block;
@@ -57,26 +60,53 @@
     }
 
 
-    #imageContainer{
-      width:100%;
-      height:150vh;
-      margin-top: 20px;
-      border:none; 
-      overflow: auto;  
-      object-fit: contain;
+    .button_delete{
+      display: inline-block;
+      padding: 15px 25px;
+      font-size: 24px;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      outline: none;
+      color: #fff;
+      background-color: red;
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 9px #999;
+    }
+    .button_delete:hover {
+      background-color: #3e8e41;
+    }
+
+    .button_delete:active {
+      background-color: #3e8e41;
+      box-shadow: 0 5px #666;
+      transform: translateY(4px);
     }
   </style>
 </head>
 <body>
   <div id="button-container">
-    <button class="button" id="showScreenshots" onclick="showScreenshots()">Show Screenshot</button>
+    <button class="button" id="showScreenshots" onclick="showScreenshot()">Show Screenshot</button>
     <button class="button" id="takeScreenshot" onclick="takeScreenshot()">Take Screenshot</button>
   </div>
-  {% if image_url %}
+
+  <ul id="imageList">
+    {% if images %}
+        {% for image in images %}
+            <li>
+                <a href="{{ url_for('show_image', image_name=image['name'], image_url=image['public_url']) }}">
+                    <img src="{{ image['public_url'] }}" alt="{{ image['name'] }}" width="100">
+                    {{ image['name'] }}
+                </a>
+            </li>
+        {% endfor %}
+    {% elif image_url %}
         <img id="screenshotImage" src="{{ image_url }}" alt="Screenshot">
     {% else %}
         <p>No screenshot available.</p>
-  {% endif %}
+    {% endif %}
+  </ul>
 
   <script>
     async function takeScreenshot() {
@@ -89,25 +119,90 @@
           body: JSON.stringify({ action: 'takeScreenshot' }),
         });
         const data = await response.json();
-        console.log("đã nhận được ảnh: ",data);
-        document.getElementById('screenshotImage').src = data.image_url;
+
+        if (data.image_url) {
+            const newImage = document.createElement('img');
+            newImage.src = data.image_url;
+            newImage.alt = 'Screenshot';
+
+            // Chèn thẻ <img> vào trang
+            const screenshotContainer = document.getElementById('imageList');
+            imageList.innerHTML = ''; 
+            imageList.appendChild(newImage);
+        } else {
+            console.log('No image URL available.');
+        }
       } catch (error) {
         console.error('Error:', error);
       }
     }
+
+    function createImageListItem(image) {
+      const listItem = document.createElement('li');
+      const hasImage = image && image.public_url && image.name;
+
+      if (hasImage) {
+          listItem.innerHTML = `
+              <div>
+                  <a href="${image.public_url}" >
+                      <img src="${image.public_url}" alt="${image.name}" width="100">
+                      ${image.name}
+                  </a>
+                  <button class="button_delete" onclick="deleteImage('${image.name}')">Xoá</button>
+              </div>
+              <br>    
+
+          `;
+      }
+
+    return listItem;
+  }
+
     async function showScreenshot() {
       try {
-        const response = await fetch('/screenshots', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ action: 'showScreenshot' }),
-        });
+          const response = await fetch('/screenshots', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ action: 'showScreenshot' }),
+          });
+  
+          const data = await response.json();
+  
+          if (data.images) {
+              // Nếu có danh sách ảnh, hiển thị chúng
+              const imageList = document.getElementById('imageList');
+              imageList.innerHTML = ''; // Xóa nội dung cũ trước khi thêm mới
+  
+              data.images.forEach((image) => {
+                const listItem = createImageListItem(image);
+                imageList.appendChild(listItem);
+            });
+          } else {
+              console.log('No images available.');
+          }
       } catch (error) {
-        console.error('Error:', error);
+          console.error('Error:', error);
       }
     }
+    function deleteImage(imageName) {
+      // Gửi yêu cầu xoá ảnh tới server
+      fetch(`/delete_image/${imageName}`, {
+          method: 'POST',
+      }).then(response => {
+          if (response.ok) {
+              // Nếu xoá thành công, cập nhật lại danh sách ảnh
+              showScreenshot();
+          } else {
+              console.error('Failed to delete image.');
+          }
+      }).catch(error => {
+          console.error('Error:', error);
+      });
+    }
+
+  
 
   </script>
 </body>
