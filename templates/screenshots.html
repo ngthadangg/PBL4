@@ -95,6 +95,19 @@
         console.error('Error:', error);
       }
     }
+    async function showScreenshot() {
+      try {
+        const response = await fetch('/screenshots', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ action: 'showScreenshot' }),
+        });
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
 
   </script>
 </body>

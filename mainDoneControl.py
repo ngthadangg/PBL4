@@ -172,12 +172,12 @@ def screenshots_router():
         
         if action == 'takeScreenshot':
             client_socket.send('takeScreenshot'.encode('utf-8'))
-            
             try:
                 image_url = client_socket.recv(1024).decode('utf-8')
                 print("Received image URL:", image_url)
             except Exception as e:
                 print("Error receiving image URL:", str(e))
+        
             
         return jsonify({'image_url': image_url})
 
