@@ -49,7 +49,9 @@ def takeScreenshot():
         
         # Lưu ảnh vào Firebase Storage
         bucket = storage.bucket()
-        blob = bucket.blob(nameScreen)
+        
+        destination = 'images/' + nameScreen
+        blob = bucket.blob(destination)
         blob.upload_from_filename(nameScreen)
         
         # Gửi link ảnh public  đến server
