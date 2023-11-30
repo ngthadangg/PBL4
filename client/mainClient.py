@@ -14,7 +14,7 @@ firebase_admin.initialize_app(cred, {"storageBucket": "pbl4-09092003.appspot.com
 
 
 clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-serverParent = '192.168.1.6'
+serverParent = '192.168.1.5'
 serverPort = 8080
 
 
