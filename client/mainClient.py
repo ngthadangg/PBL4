@@ -10,7 +10,10 @@ import firebase_admin
 from firebase_admin import credentials, storage
 
 cred = credentials.Certificate("credentials.json")
-firebase_admin.initialize_app(cred, {"storageBucket": "pbl4-09092003.appspot.com"})
+firebase_admin.initialize_app(cred, {
+    "storageBucket": "pbl4-09092003.appspot.com",
+    "databaseURL": "https://pbl4-09092003-default-rtdb.firebaseio.com"
+    })
 
 
 clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
