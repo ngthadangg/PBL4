@@ -1,25 +1,32 @@
 import psutil
 import time
 
-current_apps = set()
-while True:
-    # Lấy danh sách các ứng dụng đang chạy
-    running_apps = {process.name() for process in psutil.process_iter() if process.name().endswith('.exe')}
-    
-    new_apps = running_apps - current_apps
-    closed_apps = current_apps - running_apps
-    
-    for app in new_apps:
-        # print(f"New App: {app}")
-        app_new = "New App: {}".format(app)
-        print(app_new)
-        # clientSocket.send(app_new.encode('utf-8'))
-    
-    for app in closed_apps:
-        # print(f"Closed App: {app}")
-        app_close = "Closed App: {}".format(app)
-        print(app_close)
-        # clientSocket.send(app_close.encode('utf-8'))
-    
-    current_apps = running_apps        
-    time.sleep(1)
+def is_user_application(app_info):
+    try:
+        user = psutil.Process(app_info['pid']).username()
+        if not user.startswith("NT AUTHORITY") and not user.startswith("SYSTEM"):
+            return True
+    except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+        pass
+    return False
+
+def getAppHistory():
+    current_apps = set()
+    while True:
+        running_apps = [process.info for process in psutil.process_iter(attrs=['pid', 'name']) if process.info['name'].endswith('.exe')]
+        
+        user_apps = {app['name'] for app in running_apps if is_user_application(app)}
+
+        new_apps = user_apps - current_apps
+        closed_apps = current_apps - user_apps
+
+        for app in new_apps:
+            app_new = "New App: {}".format(app)
+            print(app_new)
+
+        current_apps = user_apps
+
+        time.sleep(1)
+
+# Gọi hàm để kiểm tra
+getAppHistory()
