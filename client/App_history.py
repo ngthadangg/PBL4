@@ -1,5 +1,15 @@
 import psutil
 import time
+import os
+import psutil
+import firebase_admin
+from firebase_admin import credentials, storage
+
+cred = credentials.Certificate("credentials.json")
+firebase_admin.initialize_app(cred, {
+    "storageBucket": "pbl4-09092003.appspot.com",
+    "databaseURL": "https://pbl4-09092003-default-rtdb.firebaseio.com"
+    })
 
 # Danh sách lưu trữ các ứng dụng hiện tại
 current_apps = set()

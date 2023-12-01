@@ -6,7 +6,7 @@ def get_browsing_history():
     while True:
         
         db_path = os.path.expanduser('~') + "\\AppData\\Local\\Microsoft\\Edge\\User Data\\Default\\History"
-        # db_path = os.path.expanduser('~') + r'\AppData\Local\Microsoft\Edge\User Data\Default'
+        # db_path = os.path.expanduser('~') + r'\AppD   ata\Local\Microsoft\Edge\User Data\Default'
 
 
         # Kết nối đến cơ sở dữ liệu SQLite

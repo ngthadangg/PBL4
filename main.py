@@ -236,5 +236,16 @@ def appHistory_router():
 
     return render_template('history.html')  
 
+@app.route('/statistics',methods=['GET','POST'])
+def statistics_router():
+    # Dữ liệu cho biểu đồ tròn
+    labels = ['Thời gian sử dụng (giờ)',]
+    data = [15, 9]
+
+    # Dữ liệu cho biểu đồ cột (ví dụ, thay thế bằng dữ liệu thực tế của bạn)
+    bar_data = [15, 25, 35, 45, 30, 20, 10, 5, 8, 12, 18, 22, 28, 32, 38, 60, 60, 28, 20, 15, 10, 5, 2, 10]
+
+    return render_template('statistics.html', labels=labels, data=data, bar_data=bar_data)
+    
 if __name__ == '__main__':
     app.run(debug=True, port=8000)

@@ -7,13 +7,14 @@ import time
 import os
 import psutil
 import firebase_admin
-from firebase_admin import credentials, storage
+from firebase_admin import credentials, storage, db
 
 cred = credentials.Certificate("credentials.json")
 firebase_admin.initialize_app(cred, {
     "storageBucket": "pbl4-09092003.appspot.com",
     "databaseURL": "https://pbl4-09092003-default-rtdb.firebaseio.com"
     })
+ref = db.reference('app_history')
 
 
 clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -63,15 +64,13 @@ def takeScreenshot():
         print("Link: ",  link)
         clientSocket.send(link.encode('utf-8'))
         
-        # # Generate a download URL
-        # download_url = blob.generate_signed_url(expiration=300)  # Adjust expiration time as needed
-        # print("Download URL: ", download_url)
-        # clientSocket.send(download_url.encode('utf-8'))
+
 
     except Exception as e:
         print("Error: " + str(e))
 
 def getAppHistory():
+    
     current_apps = set()
     while True:
         # Lấy danh sách các ứng dụng đang chạy
@@ -84,13 +83,13 @@ def getAppHistory():
             # print(f"New App: {app}")
             app_new = "New App: {}".format(app)
             print(app_new)
-            clientSocket.send(app_new.encode('utf-8'))
+            # clientSocket.send(app_new.encode('utf-8'))
         
         for app in closed_apps:
             # print(f"Closed App: {app}")
             app_close = "Closed App: {}".format(app)
             print(app_close)            
-            clientSocket.send(app_close.encode('utf-8'))
+            # clientSocket.send(app_close.encode('utf-8'))
         
         current_apps = running_apps
         

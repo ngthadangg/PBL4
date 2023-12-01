@@ -1,22 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Login form</title>
-        
-        <style>
-            body{
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height:  100vh;
-                margin: 0;
-            }
-        </style>
-    </head>
-    <body>
-        <h1>statistics</h1>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Chart.js Example</title>
+    <!-- Thêm thư viện Chart.js từ CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Tổng thời gian sử dụng trong ngày</h1>
 
+    <!-- Element để vẽ biểu đồ tròn -->
+    <canvas id="myDoughnutChart" width="100" height="100"></canvas>
+
+    <br>
+    <h1>Biểu đồ  thời gian sử dụng</h1>
+
+    <!-- Element để vẽ biểu đồ cột -->
+    <canvas id="myBarChart" width="400" height="200"></canvas>
+
+    <h2>Đồ án xây dựng bởi: </h2>
+    <ul>
+        <li>Nguyễn Thanh Đăng - 102210310</li>
+        <li>Lê Quốc Vinh- 10221035</li>
+    </ul>
+
+    <br>
+    <br>
+    <br><br>
+
+    <script>
+        // Lấy dữ liệu từ Flask và vẽ biểu đồ tròn
+        var doughnutLabels = {{ labels|tojson|safe }};
+        var doughnutData = {{ data|tojson|safe }};
+
+        var doughnutCtx = document.getElementById('myDoughnutChart').getContext('2d');
+        var doughnutChart = new Chart(doughnutCtx, {
+            type: 'doughnut',
+            data: {
+                labels: doughnutLabels,
+                datasets: [{
+                    data: doughnutData,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                    ],
+                }],
+            },
+        });
+
+        // Lấy dữ liệu từ Flask và vẽ biểu đồ cột
+        var barLabels = Array.from({ length: 24 }, (_, i) => i); // Tạo mảng từ 0 đến 23
+        var barData = {{ bar_data|tojson|safe }};
+
+        var barCtx = document.getElementById('myBarChart').getContext('2d');
+        var barChart = new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: barLabels,
+                datasets: [{
+                    label: 'Số phút hoạt động',
+                    data: barData,
+                    backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                }],
+            },
+        });
+    </script>
+</body>
 </html>

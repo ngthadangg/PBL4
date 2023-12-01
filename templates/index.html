@@ -11,10 +11,15 @@
             padding: 0;
             margin: 10px;
             box-sizing: border-box;
+            
 
         }
         body{
             background-color: #e4e4e4
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+
         }
         nav{
             background-color : white;
@@ -65,7 +70,7 @@
         <a href="#" onclick="loadPage('/statistics')">Thống kê</a>
         
     </nav>
-    <iframe id="content" style="width:100%;height:80vh;border:none;"></iframe>
+    <iframe id="content" style="width:100%;height:100vh;border:none;"></iframe>
 
     <script>
         var isLoggedIn = {{ is_logged_in|tojson|safe }};
