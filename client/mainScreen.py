@@ -88,6 +88,14 @@ def getAppHistory():
             if app not in running_apps:
                 close_time = int(time.time())
                 start_time = current_apps[app]['start-time']
+                
+                # Chuyển đổi start_time và close_time thành định dạng giờ-phút-giây
+                start_time_datetime = datetime.fromtimestamp(start_time)
+                close_time_datetime = datetime.fromtimestamp(close_time)
+                
+                formatted_start_time = start_time_datetime.strftime('%H:%M:%S')
+                formatted_close_time = close_time_datetime.strftime('%H:%M:%S')
+                
                 usage_time = close_time - start_time
                 print(f"Closed App: {app}, Usage Time: {usage_time} seconds")
                 
@@ -95,7 +103,13 @@ def getAppHistory():
                 current_date = time.strftime('%Y-%m-%d')
                 date_ref = ref.child(current_date)
                 app_ref = date_ref.child('app_history').push()
-                app_ref.update({'app_name': app, 'start-time': start_time, 'end-time': close_time, 'usage-time': usage_time})
+                
+                app_ref.update({
+                    'app_name': app,
+                    'start-time': formatted_start_time,
+                    'end-time': formatted_close_time,
+                    'usage-time': usage_time
+                })
         
         # Cập nhật danh sách các ứng dụng hiện tại và thời điểm mở
         current_apps = {app: {'start-time': timestamp} for app, timestamp in running_apps.items()}
@@ -111,8 +125,6 @@ def getAppHistory():
         
         # Chờ 1 giây trước khi lặp lại để tránh tải nhiều tài nguyên hệ thống
         time.sleep(1)
-
-
            
 with Listener(on_press=on_press) as parent:
     try:
