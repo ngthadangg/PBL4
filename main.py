@@ -6,13 +6,17 @@ import sqlite3
 import threading
 from google.cloud import storage
 import firebase_admin
-from firebase_admin import credentials, storage
+from firebase_admin import credentials, storage, db
 
 # cred = credentials.Certificate("credentials.json")
 # firebase_admin.initialize_app(cred, {"storageBucket": "pbl4-09092003.appspot.com"})
 
 cred = credentials.Certificate("serviceAccountKey.json")
-firebase_admin.initialize_app(cred, {"storageBucket": "pbl4-09092003.appspot.com"})
+firebase_admin.initialize_app(cred, {
+        "storageBucket": "pbl4-09092003.appspot.com",
+        "databaseURL": "https://pbl4-09092003-default-rtdb.firebaseio.com"
+    })
+ref = db.reference('app_history')
 
 
 app = Flask(__name__)
@@ -103,6 +107,10 @@ def get_screenshots_list():
     screenshots_list = [blob.public_url for blob in blobs if blob.name.startswith("screenshot")]
 
     return screenshots_list
+
+def get_available_dates():
+    all_dates = ref.get().keys()  # Lấy tất cả các key (ngày) từ Firebase
+    return [date for date in all_dates if ref.child(date).child('app_history').get()]
 
     
 @app.route('/', methods=['GET', 'POST'])
@@ -215,26 +223,32 @@ def delete_image(image_name):
   
 @app.route('/history',methods=['GET','POST'])
 def appHistory_router():
-    app = ""
-    if request.method == 'POST':
-        data = request.get_json()
-        action = data.get('action')
-        print("Action: " ,action)
-        
-        if action == 'appHistory':
-            client_socket.send('appHistory'.encode('utf-8'))
-            while True:
-                app = client_socket.recv(1024).decode('utf-8')
-                print(app, end = '\n')
-                return render_template('history.html', data=app) 
-        elif action == 'webHistory':
-            client_socket.send('webHistory'.encode('utf-8'))
-            while True:
-                web = client_socket.recv(1024).decode('utf-8')
-                print(web, end = '\n')
-                return render_template('history.html', data=web) 
+    available_dates = get_available_dates()
 
-    return render_template('history.html')  
+    if request.method == 'POST':
+        selected_date = request.form['selected_date']
+
+        # Kiểm tra xem ngày đã chọn có sẵn trong danh sách không
+        if selected_date not in available_dates:
+            return render_template('history.html', available_dates=available_dates, selected_date=None, error_message="No data available for the selected date.")
+
+        # Lấy dữ liệu từ Firebase cho ngày đã chọn
+        history_data = ref.child(selected_date).child('app_history').get()
+
+        # Truyền dữ liệu cho trang kết quả
+        return render_template('history.html', available_dates=available_dates, history_data=history_data, selected_date=selected_date)
+
+    return render_template('history.html', available_dates=available_dates, history_data=None, selected_date=None, error_message=None)
+
+@app.route('/get_history', methods=['GET'])
+def get_history_ROUTER():
+    selected_date = request.args.get('selected_date')
+
+    # Lấy dữ liệu từ Firebase cho ngày đã chọn
+    history_data = ref.child(selected_date).child('app_history').get()
+
+    # Trả về dữ liệu dưới dạng JSON
+    return jsonify(history_data)
 
 @app.route('/statistics',methods=['GET','POST'])
 def statistics_router():
