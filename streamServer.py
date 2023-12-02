@@ -5,12 +5,14 @@ import numpy as np
 import zlib
 from flask import Flask, render_template, Response
 import threading
+import random
 
 app = Flask(__name__)
 
 UDP_IP = "192.168.1.5"
-UDP_PORT = 5005
-
+# UDP_PORT = 46364
+UDP_PORT = random.randint(1024, 49151)
+print("UDP_PORT:", UDP_PORT)
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind((UDP_IP, UDP_PORT))
 
@@ -32,7 +34,7 @@ def generate_frames():
 
             # Yield the compressed data
             yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + compressed_data.tobytes() + b'\r\n')
+                   b'Content-Type: image/jpeg\r\n\r\n' + compressed_data + b'\r\n')
 
 def udp_server():
     while True:
@@ -41,16 +43,19 @@ def udp_server():
         # Decode the received data
         img = cv2.imdecode(np.frombuffer(data, dtype=np.uint8), 1)
 
-        # Display the received video frame
-        cv2.imshow('Server Stream', img)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+        # Check if the image is valid
+        if img is not None and img.shape[0] > 0 and img.shape[1] > 0:
+            # Display the received video frame
+            cv2.imshow('Server Stream', img)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
 
     cv2.destroyAllWindows()
 
+
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('stream.html')
 
 @app.route('/video_feed')
 def video_feed():
@@ -62,4 +67,4 @@ if __name__ == '__main__':
     udp_thread.start()
 
     # Start the Flask app
-    app.run(debug=True, port= 8080)
+    app.run(debug=True, port=8000)

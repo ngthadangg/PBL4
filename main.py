@@ -250,6 +250,32 @@ def get_history_ROUTER():
     # Trả về dữ liệu dưới dạng JSON
     return jsonify(history_data)
 
+
+
+@app.route('/web_history')
+def index():
+    return render_template('web_history.html')
+
+@app.route('/get_web_history', methods=['POST'])
+def get_web_history_router():
+    browser_type = request.form['browser_type']
+    selected_date = request.form['selected_date']
+    
+    if (browser_type == "Chrome"):
+        client_socket.send('ChromeHistory'.encode('utf-8'))
+    elif (browser_type == "Edge"):
+        client_socket.send('EdgeHistory'.encode('utf-8'))
+
+
+    # Tham chiếu đến thư mục ngày và loại trình duyệt
+    date_ref = ref.child(selected_date)
+    browser_ref = date_ref.child(f"{browser_type}History")
+
+    # Lấy dữ liệu từ Firebase
+    history_data = browser_ref.get()
+
+    return jsonify(history_data)
+
 @app.route('/statistics',methods=['GET','POST'])
 def statistics_router():
     # Dữ liệu cho biểu đồ tròn

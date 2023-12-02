@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web History Viewer</title>
+</head>
+<body>
+    <h1>Web History Viewer</h1>
+
+    <form id="history-form">
+        <label for="browser-type">Select Browser Type:</label>
+        <select id="browser-type" name="browser_type">
+            <option value="Edge">Edge</option>
+            <option value="Chrome">Chrome</option>
+        </select>
+
+        <label for="selected-date">Select Date:</label>
+        <input type="date" id="selected-date" name="selected_date">
+
+        <button type="button" onclick="getHistory()">Get History</button>
+    </form>
+
+    <div id="history-result"></div>
+
+    <script>
+        function getHistory() {
+            const form = document.getElementById('history-form');
+            const formData = new FormData(form);
+
+            fetch('/history', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('history-result');
+                resultDiv.innerHTML = '';
+
+                if (data) {
+                    data.forEach(item => {
+                        const div = document.createElement('div');
+                        div.innerHTML = `<p>${item.formatted_time}: ${item.title} - ${item.url}</p>`;
+                        resultDiv.appendChild(div);
+                    });
+                } else {
+                    resultDiv.innerHTML = '<p>No history available for the selected date and browser.</p>';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
