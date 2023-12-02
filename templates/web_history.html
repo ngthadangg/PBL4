@@ -37,12 +37,54 @@
                 const resultDiv = document.getElementById('history-result');
                 resultDiv.innerHTML = '';
         
-                if (data) {
+//                if (data) {
+//                    data.forEach(item => {
+//                        const div = document.createElement('div');
+//                        div.innerHTML = `<p>${item.formatted_time}: ${item.title} - ${item.url}</p>`;
+//                        resultDiv.appendChild(div);
+//                    });
+//                } else {
+//                    resultDiv.innerHTML = '<p>No history available for the selected date and browser.</p>';
+//                }
+                if (data && data.length > 0) {
+                    // Tạo bảng và tiêu đề
+                    const table = document.createElement('table');
+                    const thead = document.createElement('thead');
+                    const trHead = document.createElement('tr');
+                    const thTime = document.createElement('th');
+                    const thTitle = document.createElement('th');
+                    const thUrl = document.createElement('th');
+
+                    thTime.textContent = 'Time';
+                    thTitle.textContent = 'Title';
+                    thUrl.textContent = 'URL';
+
+                    trHead.appendChild(thTime);
+                    trHead.appendChild(thTitle);
+                    trHead.appendChild(thUrl);
+                    thead.appendChild(trHead);
+                    table.appendChild(thead);
+
+                    // Thêm dữ liệu vào tbody
+                    const tbody = document.createElement('tbody');
                     data.forEach(item => {
-                        const div = document.createElement('div');
-                        div.innerHTML = `<p>${item.formatted_time}: ${item.title} - ${item.url}</p>`;
-                        resultDiv.appendChild(div);
+                        const tr = document.createElement('tr');
+                        const tdTime = document.createElement('td');
+                        const tdTitle = document.createElement('td');
+                        const tdUrl = document.createElement('td');
+
+                        tdTime.textContent = item.formatted_time;
+                        tdTitle.textContent = item.title;
+                        tdUrl.textContent = item.url;
+
+                        tr.appendChild(tdTime);
+                        tr.appendChild(tdTitle);
+                        tr.appendChild(tdUrl);
+                        tbody.appendChild(tr);
                     });
+
+                    table.appendChild(tbody);
+                    resultDiv.appendChild(table);
                 } else {
                     resultDiv.innerHTML = '<p>No history available for the selected date and browser.</p>';
                 }

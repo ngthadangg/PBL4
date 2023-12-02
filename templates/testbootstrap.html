@@ -30,6 +30,7 @@
             display: flex;
             color: tomato;
             align-items: center;
+            cursor: pointer; /* Cho phép nhấp vào KidLogger để hiển thị mô tả */
         }
 
         nav a {
@@ -63,6 +64,22 @@
             background-color: #007bff;
         }
 
+        .description-container {
+            display: none;
+            position: absolute;
+            top: 50px; /* Vị trí của iframe */
+            left: 10px; /* Điều chỉnh khoảng cách từ lề trái */
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            z-index: 1000;
+        }
+
+        .description-container.show {
+            display: block;
+        }
+
         .dropdown {
             display: flex;
             text-align: center;
@@ -90,7 +107,7 @@
 </head>
 <body>
     <nav>
-        <h2>KidLogger</h2>
+        <h2 onclick="toggleDescription()">KidLogger</h2>
         <a href="#" onclick="loadPage('/keylogger')">Giám sát bàn phím</a>
         <a href="#" onclick="loadPage('/screenshots')">Giám sát màn hình</a>
         <a href="#" onclick="loadPage('/history')">Giám sát hoạt động</a>
@@ -98,12 +115,23 @@
         <a href="#" onclick="loadPage('/remote-control')">Điều khiển máy tính</a>
         <a href="#" onclick="loadPage('/statistics')">Thống kê</a>
     </nav>
-    
+
+    <!-- Phần mô tả tính năng -->
     <div class="description-container" id="descriptionContainer">
-        <!-- Nội dung giới thiệu của trang home sẽ hiển thị ở đây -->
+        <p>Chào mừng bạn đến với KidLogger - ứng dụng giám sát toàn diện cho máy tính của bạn.</p>
+        <p>KidLogger cho phép bạn:</p>
+        <ul>
+            <li>Giám sát bàn phím: Ghi lại các phím được nhấn.</li>
+            <li>Giám sát màn hình: Chụp ảnh màn hình theo khoảng thời gian.</li>
+            <li>Giám sát hoạt động: Ghi lại các hoạt động trên máy tính.</li>
+            <li>Giám sát duyệt web: Theo dõi lịch sử duyệt web.</li>
+            <li>Điều khiển máy tính: Kiểm soát từ xa máy tính của bạn.</li>
+            <li>Thống kê: Hiển thị thống kê về sử dụng máy tính.</li>
+        </ul>
+        <p>Bắt đầu sử dụng KidLogger ngay hôm nay để bảo vệ và giám sát an toàn của bạn.</p>
     </div>
 
-    <iframe id="content" src="home.html"></iframe>
+    <iframe id="content"></iframe>
 
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
@@ -113,6 +141,7 @@
     <script>
         var isLoggedIn = {{ is_logged_in|tojson|safe }};
         var contentIframe = document.getElementById('content');
+        var descriptionContainer = document.getElementById('descriptionContainer');
 
         if (isLoggedIn) {
             contentIframe.style.display = 'block';
@@ -124,6 +153,15 @@
         function loadPage(page) {
             contentIframe.src = page;
         }
+
+        function toggleDescription() {
+            descriptionContainer.classList.toggle('show');
+        }
+
+        // Hiển thị mô tả khi trang được tải xong
+        window.onload = function() {
+            descriptionContainer.classList.add('show');
+        };
     </script>
 </body>
 </html>

