@@ -16,7 +16,7 @@ firebase_admin.initialize_app(cred, {
         "storageBucket": "pbl4-09092003.appspot.com",
         "databaseURL": "https://pbl4-09092003-default-rtdb.firebaseio.com"
     })
-ref = db.reference('app_history')
+ref = db.reference('history')
 
 
 app = Flask(__name__)
@@ -261,10 +261,11 @@ def get_web_history_router():
     browser_type = request.form['browser_type']
     selected_date = request.form['selected_date']
     
-    if (browser_type == "Chrome"):
-        client_socket.send('ChromeHistory'.encode('utf-8'))
-    elif (browser_type == "Edge"):
-        client_socket.send('EdgeHistory'.encode('utf-8'))
+    if client_socket:
+        if (browser_type == "Chrome"):
+            client_socket.send('ChromeHistory'.encode('utf-8'))
+        elif (browser_type == "Edge"):
+            client_socket.send('EdgeHistory'.encode('utf-8'))
 
 
     # Tham chiếu đến thư mục ngày và loại trình duyệt
