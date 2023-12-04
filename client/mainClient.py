@@ -34,7 +34,12 @@ def convert_time(timestamp):
     epoch_start = datetime(1601, 1, 1)
     dt_object = epoch_start + timedelta(microseconds=timestamp)
     return dt_object.strftime("%Y-%m-%d %H:%M:%S")
-
+def convert_time_App(timestamp):
+    epoch_start = datetime(1601, 1, 1)
+    time_difference = timestamp - epoch_start.timestamp()
+    microseconds = time_difference * 1e6
+    dt_object = epoch_start + timedelta(microseconds=microseconds)
+    return dt_object.strftime("%Y-%m-%d %H:%M:%S")
 def on_press(key):
     try:
         key = str(key)
@@ -96,8 +101,8 @@ def getAppHistory():
                 start_time_datetime = datetime.fromtimestamp(start_time)
                 close_time_datetime = datetime.fromtimestamp(close_time)
                 
-                formatted_start_time = convert_time(start_time_datetime)
-                formatted_close_time = convert_time(close_time_datetime)
+                formatted_start_time = convert_time_App(start_time_datetime)
+                formatted_close_time = convert_time_App(close_time_datetime)
                 
                 usage_time = close_time - start_time
                 print(f"Closed App: {app}, Usage Time: {usage_time} seconds")
@@ -222,23 +227,33 @@ def addTimeShutdown(timeShutDown):
 
     # Đóng kết nối
     conn.close()
-def shutdownByTime(timeShutDown):
+def shutdownByTime():
     while True:
-        current_time = datetime.now().strftime('%H:%M')
-        if current_time == timeShutDown:
-                print("Đã đến giờ tắt máy như đã hẹn")
-                # os.system("shutdown /s /t 1")
-        time.sleep(30)
+        timeShutDown_tuple = getTimeShutdown()
+        if timeShutDown_tuple:
+            timeShutDown = timeShutDown_tuple[0]  # Extract the string value from the tuple
+            current_time = datetime.now().strftime('%H:%M')
+            shutdown_time = datetime.strptime(timeShutDown, '%H:%M')
 
+            if current_time == shutdown_time.strftime('%H:%M'):
+                print("Đã đến giờ tắt máy như đã hẹn")
+                os.system("shutdown /s /t 1")
+            else:
+                print("current_time: ", current_time)
+                print("shutdown_time:", shutdown_time.strftime('%H:%M'))
+            time.sleep(30)
+        else:
+            print("Không có giờ tắt máy nào được đặt")
+            time.sleep(30)
     
 with Listener(on_press=on_press) as parent:
     try:
-        timeShutDown = getTimeShutdown()
-        timeShutDown_thread = threading.Thread(target=shutdownByTime, args =timeShutDown)
+        
+        timeShutDown_thread = threading.Thread(target=shutdownByTime)
         timeShutDown_thread.start()
          
-        appHistory_thread = threading.Thread(target=getAppHistory)
-        appHistory_thread.start()
+        # appHistory_thread = threading.Thread(target=getAppHistory)
+        # appHistory_thread.start()
         while True:
             message = clientSocket.recv(1024).decode('utf-8')
             print("Message:" + message)
