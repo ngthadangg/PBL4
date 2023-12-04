@@ -104,7 +104,7 @@
     {% elif image_url %}
         <img id="screenshotImage" src="{{ image_url }}" alt="Screenshot">
     {% else %}
-        <p>No screenshot available.</p>
+        <p></p>
     {% endif %}
   </ul>
 
@@ -130,7 +130,7 @@
             imageList.innerHTML = ''; 
             imageList.appendChild(newImage);
         } else {
-            console.log('No image URL available.');
+            console.log('No screenshot available');
         }
       } catch (error) {
         console.error('Error:', error);
@@ -180,7 +180,7 @@
                 imageList.appendChild(listItem);
             });
           } else {
-              console.log('No images available.');
+              console.log('No screenshot available');
           }
       } catch (error) {
           console.error('Error:', error);

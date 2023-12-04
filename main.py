@@ -151,7 +151,7 @@ def login():
             return "Đã xảy ra lỗi: " + str(e)
     return render_template('login.html')
 @app.route('/home.html')
-def home():
+def home_router():
     return render_template('home.html')
 @app.route('/keylogger')
 def keylogger_router():
@@ -162,6 +162,8 @@ def remote_router():
     if request.method == 'POST':
         data = request.get_json()
         action = data.get('action')
+        shutdown_time = data.get('shutdownTime')  
+
         print("Action: " ,action)
         
         if action == 'shutdown':
@@ -171,6 +173,12 @@ def remote_router():
         elif action == 'restart':
             client_socket.send('restart'.encode('utf-8'))
             return jsonify(message='Đã thực hiện thành công hành động restart!')
+        elif action == 'timeShutdown':
+            print('shutdown_time: ' ,shutdown_time)
+            client_socket.send('shutdown_time'.encode('utf-8'))
+            client_socket.send(shutdown_time.encode('utf-8'))
+
+            return jsonify(message=f'Đã đặt lịch hẹn giờ tắt máy là: {shutdown_time} ')
 
     return render_template('remote-control.html') 
  

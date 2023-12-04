@@ -1,28 +1,273 @@
-<!-- home.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KidLogger - Home</title>
-    <!-- Đặt kiểu dáng và CSS cho trang home tại đây -->
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KidLogger</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Sriracha&display=swap");
+
+body {
+  margin: 0;
+  box-sizing: border-box;
+  background-color: rgb(243, 237, 255);
+}
+
+/* CSS for header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f5f5f5;
+}
+
+.header .logo {
+  font-size: 25px;
+  font-family: "Sriracha", cursive;
+  color: #000;
+  text-decoration: none;
+  margin-left: 30px;
+}
+
+.nav-items {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: #f5f5f5;
+  margin-right: 20px;
+}
+
+.nav-items a {
+  text-decoration: none;
+  color: #000;
+  padding: 35px 20px;
+}
+
+/* CSS for main element */
+.intro {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 520px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.5) 100%), url("https://images.unsplash.com/photo-1587620962725-abab7fe55159?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1031&q=80");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.intro h1 {
+  font-family: sans-serif;
+  font-size: 60px;
+  color: #fff;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.intro p {
+  font-size: 20px;
+  color: #d1d1d1;
+  text-transform: uppercase;
+  margin: 20px 0;
+}
+
+.intro button {
+  background-color: #5edaf0;
+  color: #000;
+  padding: 10px 25px;
+  border: none;
+  border-radius: 5px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.4)
+}
+
+.achievements {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 40px 80px;
+}
+
+.achievements .work {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0 40px;
+}
+
+.achievements .work i {
+  width: fit-content;
+  font-size: 50px;
+  color: #333333;
+  border-radius: 50%;
+  border: 2px solid #333333;
+  padding: 12px;
+}
+
+.achievements .work .work-heading {
+  font-size: 20px;
+  color: #333333;
+  text-transform: uppercase;
+  margin: 10px 0;
+}
+
+.achievements .work .work-text {
+  font-size: 15px;
+  color: #585858;
+  margin: 10px 0;
+}
+
+.about-me {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 80px;
+  border-top: 2px solid #eeeeee;
+}
+
+.about-me img {
+  width: 500px;
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.about-me-text h2 {
+  font-size: 30px;
+  color: #333333;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.about-me-text p {
+  font-size: 15px;
+  color: #585858;
+  margin: 10px 0;
+}
+
+/* CSS for footer */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #4d95f5;
+  padding: 40px 80px;
+}
+
+.footer .copy {
+  color: #ffff;
+}
+
+.bottom-links {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 40px 0;
+  color: #ffff;
+}
+
+.bottom-links .links {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0 40px;
+  color: #ffff;
+
+}
+
+.bottom-links .links span {
+  font-size: 20px;
+  color: #fff;
+  text-transform: uppercase;
+  margin: 10px 0;
+  color: #ffff;
+
+}
+
+.bottom-links .links a {
+  text-decoration: none;
+  color: #a1a1a1;
+  padding: 10px 20px;
+  color: #ffff;
+
+}
+  </style>
 </head>
+
 <body>
-    <h1>Chào mừng bạn đến với KidLogger</h1>
-    <p>Đây là trang giới thiệu về các tính năng của ứng dụng KidLogger:</p>
-    <ul>
-        <p>Chào mừng bạn đến với KidLogger - ứng dụng giám sát toàn diện cho máy tính của bạn.</p>
-        <p>KidLogger cho phép bạn:</p>
-        <ul>
-            <li>Giám sát bàn phím: Ghi lại các phím được nhấn.</li>
-            <li>Giám sát màn hình: Chụp ảnh màn hình theo khoảng thời gian.</li>
-            <li>Giám sát hoạt động: Ghi lại các hoạt động trên máy tính.</li>
-            <li>Giám sát duyệt web: Theo dõi lịch sử duyệt web.</li>
-            <li>Điều khiển máy tính: Kiểm soát từ xa máy tính của bạn.</li>
-            <li>Thống kê: Hiển thị thống kê về sử dụng máy tính.</li>
-        </ul>
-        <p>Bắt đầu sử dụng KidLogger ngay hôm nay để bảo vệ và giám sát an toàn của bạn.</p>
-    </ul>
-    <!-- Các nội dung giới thiệu khác -->
+  <main>
+    <div class="intro">
+      <h1>KIDLOGGER</h1>
+      <p>Chương trình dành cho phụ huynh giám sát con cái</p>
+      <button>Learn More</button>
+    </div>
+    <div class="achievements">
+      <div class="work">
+        <i class="fa-regular fa-keyboard" style="color: #4d95f5;"></i>        
+        <p class="work-heading">KeyLogger</p>
+        <p class="work-text">Giám sát hoạt động bàn phím bằng cách liên tục thu thập dữ liệu nhấn phím từ máy con cái.</p>
+      </div>
+      <div class="work">
+        <i class="fa-solid fa-desktop" style="color: #4d95f5;"></i>
+        <p class="work-heading">Screen</p>
+        <p class="work-text">Chụp và xem ảnh màn hình vừa được chụp. Xem và xóa các ảnh màn hình đã được chụp trước đó.</p>
+      </div>
+      <div class="work">
+        <i class="fa-solid fa-star" style="color: #4d95f5;"></i>
+        <p class="work-heading">Active</p>
+        <p class="work-text">Xem danh sách các ứng dụng được mở trên máy tính và lịch sử duyệt web.</p>
+      </div>
+      <div class="work">
+        <i class="fa-solid fa-circle-nodes" style="color: #4d95f5;"></i>
+        <p class="work-heading">Controler</p>
+        <p class="work-text">Điều khiển tắt máy tính và khởi động lại để quản lý việc sử dụng máy tính.</p>
+      </div>
+      <div class="work">
+        <i class="fa-solid fa-chart-line"  style="color: #4d95f5;"></i>
+        <p class="work-heading">Static</p>
+        <p class="work-text">Xem thống kê về tổng thời gian sử dụng máy tính và chi tiết theo hằng giờ.</p>
+      </div>
+    </div>
+    <div class="about-me">
+      <div class="about-me-text">
+        <h2 style="color: #4d95f5;" >About Product</h2>
+        <p style="font-size: 20px;">
+          Trong thời đại hiện nay, với công nghệ và tri thức đang ngày càng rộng lớn, việc cho con cái tiếp cận sớm với các thiết bị công nghệ để kích thích cho các con có thể sớm tiếp thu các tri thức này, do đó việc cho con cái sử dụng máy tính từ sớm có lẽ là một giải pháp tốt. Tuy nhiên, nếu không có sự kiểm soát nhất định thì việc này có thể trở nên phản tác dụng, con cái có thể tiếp cận những thứ không mong muốn, hay xa đà vào máy tính, do đó cần phải tìm kiếm một giải pháp hiệu quả để bảo vệ và quản lý chúng một cách tốt nhất. Do đó việc <strong style="color: #4d95f5;"> "Xây Dựng Chương Trình Giám Sát Con Cái" </strong> sẽ là bước tiến quan trọng trong việc đáp ứng nhu cầu ngày càng cao của xã hội đối với sự an toàn và an ninh của thế hệ tương lai.
+        </p>
+        <br>
+        <p style="font-size: 20px;">
+            Lấy tên <strong style="color: #4d95f5;"> KidLogger </strong>, là sự kết hợp giữa Kid và Keylogger nghĩa là chương trình keylogger giám sát trẻ em, chương trình này không chỉ hướng đến việc cung cấp giải pháp giám sát hiệu quả mà còn tập trung vào việc tạo ra một môi trường an toàn và phát triển cho trẻ em. Bằng cách sử dụng công nghệ thông tin, chúng em đặt ra mục tiêu xây dựng một hệ thống linh hoạt, dễ sử dụng và đáp ứng nhu cầu căn bản của phụ huynh. 
+        </p>
+      </div>
+      <img src="https://static.qustodio.com/public-site/uploads/2021/08/06124055/group-69%402x.png" alt="Kidlogger">
+    </div>
+  </main>
+  <iframe src="https://gamma.app/embed/Giam-Sat-Ban-Phim-qx509birq564j1z?mode=doc" style="width: 100%; max-width: 100%; height: 1000px" allow="fullscreen" title="Giám Sát Bàn Phím"></iframe>
+  <footer class="footer">
+    <div class="copy">© 2023 KidLogger</div>
+    <div class="bottom-links">
+      <div class="links">
+        <span>Made by</span>
+        <a href="https://www.facebook.com/NgThaDa">Nguyễn Thanh Đăng - 102210310</a>
+        <a href="https://www.facebook.com/profile.php?id=100034744509029">Lê Quốc Vinh      - 102210335</a>
+      </div>
+      <div class="links">
+        <span>Product Links</span>
+        <a href="https://github.com/thanhdang0909/PBL4"><i class="fab fa-github"></i> Github</a>
+        <a href="#"><i class="fab fa-youtube"></i>  Youtube</a>
+      </div>
+    </div>
+  </footer>
 </body>
+
 </html>

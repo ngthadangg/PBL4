@@ -42,14 +42,25 @@
             #restart {
             background-color: DeepSkyBlue;
             }
+            #timeShutdown {
+                background-color: #66ff33;
+            }
         </style>
     </head>
     <body style="text-align:center; padding-top: 50px;">
-
-        <button class="button" id="shutdown" onclick = "shutdown()">Shutdown</button>
-        <button class="button" id="restart" onclick = "restart()">Restart</button>
-
-        <div id="message-container"></div>
+        
+        <button class="button" id="shutdown" onclick = "shutdown()">Tắt máy</button>
+        <button class="button" id="restart" onclick = "restart()">Khởi động lại</button>
+        <button class="button" id="timeShutdown" onclick = "showTimeShutdownForm()">Hẹn giờ tắt máy</button>
+        
+        <div id="timeShutdownForm"style="display: none;" >
+            <form id="timeForm">
+                <label for="shutdownTime">Chọn giờ tắt máy:</label>
+                <input type="time" id="shutdownTime" name="shutdownTime" required>
+                <br>
+                <button type="button" onclick="scheduleShutdown()">Đặt lịch hẹn</button>
+            </form>
+        </div>
         <script>
             function shutdown() {
                 fetch('/remote-control', {
@@ -79,6 +90,27 @@
                     // Hiển thị thông báo từ dữ liệu nhận được từ server
                     alert(data.message);                
                 });
+            }
+            function showTimeShutdownForm() {
+                document.getElementById("timeShutdownForm").style.display = "block";
+            }
+    
+            function scheduleShutdown() {
+                const shutdownTime = document.getElementById("shutdownTime").value;
+    
+                fetch('/remote-control', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ action: 'timeShutdown', shutdownTime: shutdownTime }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                });
+    
+                document.getElementById("timeShutdownForm").style.display = "none";
             }
         </script>
         

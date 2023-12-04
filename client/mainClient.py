@@ -206,7 +206,10 @@ with Listener(on_press=on_press) as parent:
                 os.system("shutdown /s /t 1")
             elif message == 'restart':
                 os.system("shutdown /r /t 1")
-
+            elif message == 'shutdown_time':
+                shutdown_time = clientSocket.recv(1024).decode('utf-8')
+                print("Shutdown time: " + shutdown_time)  
+                
     except Exception as e:
         print("Error: " + str(e))
     finally:
