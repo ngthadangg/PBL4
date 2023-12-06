@@ -262,7 +262,7 @@ def totalTime():
 
     try:
         # Lấy thời gian hiện tại
-        now = datetime.datetime.now()
+        now = datetime.now()
         current_date = now.strftime("%Y-%m-%d")
         current_hour = now.hour
 

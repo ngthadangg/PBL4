@@ -1,3 +1,4 @@
+import datetime
 import socket
 import os
 import time
@@ -163,7 +164,8 @@ def get_hourly_data(date):
         hourly_data[hour] = total_minutes
 
     return hourly_data
-   
+
+ 
 @app.route('/', methods=['GET', 'POST'])
 def login():
     global is_logged_in  
@@ -354,25 +356,23 @@ def web_block_router():
     return render_template('web_block.html', data=data)
 
 
-@app.route('/statistics',methods=['GET','POST'])
+@app.route('/statistics', methods=['GET', 'POST'])
 def statistics_router():
-    
     selected_date = request.args.get('selected_date')
 
+    if selected_date is None:
+        selected_date = datetime.datetime.now().strftime("%Y-%m-%d")
+
+    # Lưu ý: Chuyển dòng này xuống sau khi đã kiểm tra selected_date
     bar_data = get_hourly_data(selected_date)
-    
-    total = 0
-    for i in range(bar_data):
-        total += bar_data[i]
-    # Dữ liệu cho biểu đồ tròn
-    total = total/60
-    labels = ['Thời gian sử dụng (giờ)',]
+
+    total = sum(bar_data)
+    total = total / 60
+    labels = ['Thời gian sử dụng (giờ)', ]
     data = [total, 24 - total]
 
-    # Dữ liệu cho biểu đồ cột (ví dụ, thay thế bằng dữ liệu thực tế của bạn)
-    # bar_data = [15, 25, 35, 45, 30, 20, 10, 5, 8, 12, 18, 22, 28, 32, 38, 60, 60, 28, 20, 15, 10, 5, 2, 10]
-
     return render_template('statistics.html', labels=labels, data=data, bar_data=bar_data)
+
     
 if __name__ == '__main__':
     app.run(debug=True, port=8000)
