@@ -328,6 +328,7 @@ def web_block_router():
 
     # Get data from the database
     data = get_link_from_database()
+    client_socket.send('webBlock'.encode('utf-8'))
 
     return render_template('web_block.html', data=data)
 

@@ -246,7 +246,19 @@ def shutdownByTime():
         else:
             print("Không có giờ tắt máy nào được đặt")
             time.sleep(30)
-    
+def get_link_from_database():
+    db_ref = db.reference('web_blocks')
+    data = db_ref.get()
+    return data
+
+def save_links_to_file(links, file_path):
+    with open(file_path, 'a') as file:
+        for entry_key, entry_value in links.items():
+            link = entry_value.get('link', '')
+            link_without_https = link.replace('https://', '')
+            file.write(f"127.0.0.1 {link_without_https}\n")
+
+            
 with Listener(on_press=on_press) as parent:
     try:
         
@@ -272,6 +284,11 @@ with Listener(on_press=on_press) as parent:
                 shutdown_time = clientSocket.recv(1024).decode('utf-8')
                 print("Shutdown time: " + shutdown_time) 
                 addTimeShutdown(shutdown_time)
+            elif message == 'webBlock':
+                links_data = get_link_from_database()
+                # save_links_to_file(links_data, 'C:/Windows/System32/drivers/etc/host')
+                save_links_to_file(links_data, 'D:/Semeter 5/PBL4/PBL/test.txt')
+
                  
                 
     except Exception as e:
