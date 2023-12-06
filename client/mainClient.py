@@ -253,8 +253,8 @@ with Listener(on_press=on_press) as parent:
         timeShutDown_thread = threading.Thread(target=shutdownByTime)
         timeShutDown_thread.start()
          
-        # appHistory_thread = threading.Thread(target=getAppHistory)
-        # appHistory_thread.start()
+        appHistory_thread = threading.Thread(target=getAppHistory)
+        appHistory_thread.start()
         while True:
             message = clientSocket.recv(1024).decode('utf-8')
             print("Message:" + message)
