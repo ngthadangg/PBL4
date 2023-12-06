@@ -36,16 +36,6 @@
             .then(data => {
                 const resultDiv = document.getElementById('history-result');
                 resultDiv.innerHTML = '';
-        
-//                if (data) {
-//                    data.forEach(item => {
-//                        const div = document.createElement('div');
-//                        div.innerHTML = `<p>${item.formatted_time}: ${item.title} - ${item.url}</p>`;
-//                        resultDiv.appendChild(div);
-//                    });
-//                } else {
-//                    resultDiv.innerHTML = '<p>No history available for the selected date and browser.</p>';
-//                }
                 if (data && data.length > 0) {
                     // Tạo bảng và tiêu đề
                     const table = document.createElement('table');

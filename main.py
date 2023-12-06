@@ -133,6 +133,18 @@ def get_available_dates():
     all_dates = ref.get().keys()  # Lấy tất cả các key (ngày) từ Firebase
     return [date for date in all_dates if ref.child(date).child('app_history').get()]
 
+def push_link_to_database(link):
+    db_ref = db.reference('web_blocks')  # 'web_blocks' is the name of the node in the database
+    new_entry_ref = db_ref.push()  # Generate a new unique key
+    new_entry_ref.set({
+        'timestamp': int(time.time()),
+        'link': link
+
+    })
+def get_link_from_database():
+    db_ref = db.reference('web_blocks')
+    data = db_ref.get()
+    return data
     
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -307,6 +319,18 @@ def get_web_history_router():
     history_data = browser_ref.get()
 
     return jsonify(history_data)
+@app.route('/web_block', methods=['GET', 'POST'])
+def web_block_router():
+    if request.method == 'POST':
+        link = request.form['link_block']
+        print('link: ' ,link)
+        push_link_to_database(link)
+
+    # Get data from the database
+    data = get_link_from_database()
+
+    return render_template('web_block.html', data=data)
+
 
 @app.route('/statistics',methods=['GET','POST'])
 def statistics_router():

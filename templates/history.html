@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>App History</title>
-    <script >
+    <!-- Thêm Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script>
         document.addEventListener("DOMContentLoaded", function () {
             const historyTable = document.getElementById("history-table");
-        
+
             function updateHistoryTable(selectedDate) {
                 fetch(`/get_history?selected_date=${selectedDate}`)
                     .then(response => response.json())
@@ -13,45 +15,67 @@
                         historyTable.innerHTML = generateHistoryTable(historyData);
                     });
             }
-        
+            function secondsToHms(seconds) {
+                const hours = Math.floor(seconds / 3600);
+                const minutes = Math.floor((seconds % 3600) / 60);
+                const remainingSeconds = seconds % 60;
+                
+                if (hours){
+                    return `${hours} giờ, ${minutes} phút, ${remainingSeconds} giây`;
+
+                }
+                else if (minutes){
+                    return `${minutes} phút, ${remainingSeconds} giây`;
+                }
+                else{
+                    return `${remainingSeconds} giây`;
+
+                }
+
+            }
+
             function generateHistoryTable(historyData) {
                 if (!historyData) {
                     return "<p>No history available for the selected date.</p>";
                 }
-        
-                let tableHTML = "<h2>App History</h2><table border='1'><tr><th>App Name</th><th>Start Time</th><th>End Time</th><th>Usage Time</th></tr>";
-        
+
+                let tableHTML = "<h2>Hoạt động trong ngày</h2><table class='table table-bordered' ><thead class='thead-dark'><tr><th>Tên Ứng dụng</th><th>Thời gian mở</th><th>Thời gian đóng</th><th>Thời gian sử dụng</th></tr></thead><tbody>";
+
                 for (const recordKey in historyData) {
                     const recordData = historyData[recordKey];
-                    tableHTML += `<tr><td>${recordData['app_name']}</td><td>${recordData['start-time']}</td><td>${recordData['end-time']}</td><td>${recordData['usage-time']}</td></tr>`;
+                    if (recordData['end-time']) {
+                        const usageTimeInSeconds = recordData['usage-time'];
+                        const formattedUsageTime = secondsToHms(usageTimeInSeconds);
+                        tableHTML += `<tr><td>${recordData['app_name']}</td><td>${recordData['start-time']}</td><td>${recordData['end-time']}</td><td>${formattedUsageTime}</td></tr>`;
+                    }
                 }
-        
-                tableHTML += "</table>";
+
+                tableHTML += "</tbody></table>";
                 return tableHTML;
             }
-        
+
             // Lắng nghe sự kiện form submission
             const form = document.getElementById("history-form");
             form.addEventListener("submit", function (event) {
-                event.preventDefault();  // Ngăn chặn form submission mặc định
-        
+                event.preventDefault(); // Ngăn chặn form submission mặc định
+
                 const selectedDate = document.getElementById("selected_date").value;
                 updateHistoryTable(selectedDate);
             });
-        
+
             // Mở đầu, hiển thị dữ liệu cho ngày hiện tại
             const currentDate = new Date().toISOString().split('T')[0];
             updateHistoryTable(currentDate);
         });
-        
     </script>
 </head>
-<body>
-    <h1>Select Date</h1>
-    <form id="history-form">
-        <label for="selected_date">Select Date:</label>
-        <input type="date" id="selected_date" name="selected_date" required>
-        <button type="submit">Get History</button>
+<body class="container mt-5">
+    <form id="history-form" class="mb-4">
+        <div class="form-group">
+            <label for="selected_date">Chọn ngày muốn xem:</label>
+            <input type="date" id="selected_date" name="selected_date" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Xem lịch sử hoạt động</button>
     </form>
 
     {% if error_message %}
@@ -59,5 +83,17 @@
     {% endif %}
 
     <div id="history-table"></div>
+    <br>
+    <h2 style="color: #4d95f5;">Đồ án xây dựng bởi: </h2>
+    <ul>
+        <li><h3>Nguyễn Thanh Đăng - 102210310</h3></li>
+        <li><h3>Lê Quốc Vinh - 10221035</h3></li>
+    </ul>
+    <div class="copy">© 2023 KidLogger</div>
+
+    <!-- Thêm Bootstrap JS và Popper.js (cần thiết cho Bootstrap) -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 </html>
