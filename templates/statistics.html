@@ -7,7 +7,16 @@
     <!-- Thêm thư viện Chart.js từ CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
+<body class="container mt-5">
+
+    <form id="active-form" class="mb-4">
+        <div class="form-group">
+            <label for="selected_date">Chọn ngày muốn xem:</label>
+            <input type="date" id="selected_date" name="selected_date" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Xem biểu đồ hoạt động</button>
+    </form>
+
     <h1 style="color: #4d95f5;">Tổng thời gian sử dụng trong ngày</h1>
 
     <!-- Element để vẽ biểu đồ tròn -->

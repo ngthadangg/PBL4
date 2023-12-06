@@ -145,7 +145,25 @@ def get_link_from_database():
     db_ref = db.reference('web_blocks')
     data = db_ref.get()
     return data
-    
+
+def get_hourly_data(date):
+    hourly_data = [0] * 24  # Khởi tạo mảng với 24 giờ, giá trị ban đầu là 0
+
+    date_ref = ref.child(date)
+
+    # Lặp qua từng giờ trong ngày
+    for hour in range(24):
+        hour_str = str(hour)
+        hour_ref = date_ref.child(hour_str)
+
+        # Lấy giá trị total_minutes từ Firebase hoặc mặc định là 0 nếu không có dữ liệu
+        total_minutes = hour_ref.child("total_minutes").get() or 0
+
+        # Lưu giá trị vào mảng theo giờ
+        hourly_data[hour] = total_minutes
+
+    return hourly_data
+   
 @app.route('/', methods=['GET', 'POST'])
 def login():
     global is_logged_in  
@@ -338,12 +356,21 @@ def web_block_router():
 
 @app.route('/statistics',methods=['GET','POST'])
 def statistics_router():
+    
+    selected_date = request.args.get('selected_date')
+
+    bar_data = get_hourly_data(selected_date)
+    
+    total = 0
+    for i in range(bar_data):
+        total += bar_data[i]
     # Dữ liệu cho biểu đồ tròn
+    total = total/60
     labels = ['Thời gian sử dụng (giờ)',]
-    data = [15, 9]
+    data = [total, 24 - total]
 
     # Dữ liệu cho biểu đồ cột (ví dụ, thay thế bằng dữ liệu thực tế của bạn)
-    bar_data = [15, 25, 35, 45, 30, 20, 10, 5, 8, 12, 18, 22, 28, 32, 38, 60, 60, 28, 20, 15, 10, 5, 2, 10]
+    # bar_data = [15, 25, 35, 45, 30, 20, 10, 5, 8, 12, 18, 22, 28, 32, 38, 60, 60, 28, 20, 15, 10, 5, 2, 10]
 
     return render_template('statistics.html', labels=labels, data=data, bar_data=bar_data)
     

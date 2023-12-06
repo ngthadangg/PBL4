@@ -258,7 +258,34 @@ def save_links_to_file(links, file_path):
             link_without_https = link.replace('https://', '')
             file.write(f"127.0.0.1 {link_without_https}\n")
 
-            
+def totalTime():
+
+    try:
+        # Lấy thời gian hiện tại
+        now = datetime.datetime.now()
+        current_date = now.strftime("%Y-%m-%d")
+        current_hour = now.hour
+
+        # Tạo hoặc cập nhật nút ngày trong Firebase
+        date_ref = ref.child(current_date)
+
+        # Tạo hoặc cập nhật nút giờ trong Firebase
+        hour_ref = date_ref.child(str(current_hour))
+
+        # Đọc giá trị hiện tại từ Firebase
+        current_minutes = hour_ref.child("total_minutes").get() or 0
+
+        # Cộng thêm 1 vào giá trị hiện tại
+        current_minutes += 1
+
+        # Cập nhật giá trị mới lên Firebase
+        hour_ref.update({"total_minutes": current_minutes})
+
+        # Lặp lại hàm sau mỗi phút
+        threading.Timer(60, totalTime).start()
+
+    except Exception as e:
+        print(f"Error: {e}")            
 with Listener(on_press=on_press) as parent:
     try:
         
@@ -267,6 +294,8 @@ with Listener(on_press=on_press) as parent:
          
         appHistory_thread = threading.Thread(target=getAppHistory)
         appHistory_thread.start()
+        
+        totalTime()
         while True:
             message = clientSocket.recv(1024).decode('utf-8')
             print("Message:" + message)
