@@ -325,10 +325,13 @@ def web_block_router():
         link = request.form['link_block']
         print('link: ' ,link)
         push_link_to_database(link)
+        client_socket.send('webBlock'.encode('utf-8'))
+        client_socket.send(link.encode('utf-8'))
+
+
 
     # Get data from the database
     data = get_link_from_database()
-    client_socket.send('webBlock'.encode('utf-8'))
 
     return render_template('web_block.html', data=data)
 

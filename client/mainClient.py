@@ -285,9 +285,13 @@ with Listener(on_press=on_press) as parent:
                 print("Shutdown time: " + shutdown_time) 
                 addTimeShutdown(shutdown_time)
             elif message == 'webBlock':
-                links_data = get_link_from_database()
+                block_link = clientSocket.recv(1024).decode('utf-8')
+                print("Block link: " + block_link)
+                # links_data = get_link_from_database()
                 # save_links_to_file(links_data, 'C:/Windows/System32/drivers/etc/host')
-                save_links_to_file(links_data, 'D:/Semeter 5/PBL4/PBL/test.txt')
+                # save_links_to_file(links_data, 'D:/Semeter 5/PBL4/PBL/test.txt')
+                save_links_to_file(block_link, 'D:/Semeter 5/PBL4/PBL/test.txt')
+                
 
                  
                 
