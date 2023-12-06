@@ -1,86 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web History Viewer</title>
+    <!-- Thêm Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        #history-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        #history-result {
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        td.url {
+            word-wrap: break-word;
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Web History Viewer</h1>
+    <div class="container">
+        <h1 class="mt-5 mb-4">Web History Viewer</h1>
 
-    <form id="history-form" onsubmit="getHistory(); return false;">
-        <label for="browser-type">Select Browser Type:</label>
-        <select id="browser-type" name="browser_type">
-            <option value="Edge">Edge</option>
-            <option value="Chrome">Chrome</option>
-        </select>
+        <form id="history-form" onsubmit="getHistory(); return false;" class="mb-4 form-inline">
+            <div class="form-group mb-2">
+                <label for="browser-type">Select Browser Type:</label>
+                <select id="browser-type" name="browser_type" class="form-control">
+                    <option value="Edge">Edge</option>
+                    <option value="Chrome">Chrome</option>
+                </select>
+            </div>
 
-        <label for="selected-date">Select Date:</label>
-        <input type="date" id="selected-date" name="selected_date">
+            <div class="form-group mx-sm-3 mb-2">
+                <label for="selected-date" class="mr-2">Select Date:</label>
+                <input type="date" id="selected-date" name="selected_date" class="form-control">
+            </div>
 
-        <button type="submit">Get History</button>
-    </form>
+            <button type="submit" class="btn btn-primary mb-2">Get History</button>
+        </form>
 
-    <div id="history-result"></div>
+        <div id="history-result"></div>
+    </div>
+
+    <!-- Thêm Bootstrap JS và Popper.js (cần thiết cho Bootstrap) -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
     <script>
         function getHistory() {
             const form = document.getElementById('history-form');
             const formData = new FormData(form);
-        
+
             fetch('/get_web_history', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                const resultDiv = document.getElementById('history-result');
-                resultDiv.innerHTML = '';
-                if (data && data.length > 0) {
-                    // Tạo bảng và tiêu đề
-                    const table = document.createElement('table');
-                    const thead = document.createElement('thead');
-                    const trHead = document.createElement('tr');
-                    const thTime = document.createElement('th');
-                    const thTitle = document.createElement('th');
-                    const thUrl = document.createElement('th');
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const resultDiv = document.getElementById('history-result');
+                    resultDiv.innerHTML = '';
+                    if (data && data.length > 0) {
+                        const table = document.createElement('table');
+                        table.classList.add('table');
+                        const thead = document.createElement('thead');
+                        thead.classList.add('thead-light');
+                        const trHead = document.createElement('tr');
+                        const thTime = document.createElement('th');
+                        const thTitle = document.createElement('th');
+                        const thUrl = document.createElement('th');
 
-                    thTime.textContent = 'Time';
-                    thTitle.textContent = 'Title';
-                    thUrl.textContent = 'URL';
+                        thTime.textContent = 'Time';
+                        thTitle.textContent = 'Title';
+                        thUrl.textContent = 'URL';
 
-                    trHead.appendChild(thTime);
-                    trHead.appendChild(thTitle);
-                    trHead.appendChild(thUrl);
-                    thead.appendChild(trHead);
-                    table.appendChild(thead);
+                        trHead.appendChild(thTime);
+                        trHead.appendChild(thTitle);
+                        trHead.appendChild(thUrl);
+                        thead.appendChild(trHead);
+                        table.appendChild(thead);
 
-                    // Thêm dữ liệu vào tbody
-                    const tbody = document.createElement('tbody');
-                    data.forEach(item => {
-                        const tr = document.createElement('tr');
-                        const tdTime = document.createElement('td');
-                        const tdTitle = document.createElement('td');
-                        const tdUrl = document.createElement('td');
+                        const tbody = document.createElement('tbody');
+                        data.forEach(item => {
+                            const tr = document.createElement('tr');
+                            const tdTime = document.createElement('td');
+                            const tdTitle = document.createElement('td');
+                            const tdUrl = document.createElement('td');
+                            const link = document.createElement('a');
 
-                        tdTime.textContent = item.formatted_time;
-                        tdTitle.textContent = item.title;
-                        tdUrl.textContent = item.url;
+                            link.textContent = item.url;
+                            link.href = item.url;
+                            link.target = '_blank';
 
-                        tr.appendChild(tdTime);
-                        tr.appendChild(tdTitle);
-                        tr.appendChild(tdUrl);
-                        tbody.appendChild(tr);
-                    });
+                            tdTime.textContent = item.time;
+                            tdTitle.textContent = item.title;
 
-                    table.appendChild(tbody);
-                    resultDiv.appendChild(table);
-                } else {
-                    resultDiv.innerHTML = '<p>No history available for the selected date and browser.</p>';
-                }
-            })
-            .catch(error => console.error('Error:', error));
+
+                            tdUrl.classList.add('url');
+                            tdUrl.appendChild(link);
+
+                            tr.appendChild(tdTime);
+                            tr.appendChild(tdTitle);
+                            tr.appendChild(tdUrl);
+                            tbody.appendChild(tr);
+                        });
+
+                        table.appendChild(tbody);
+                        resultDiv.appendChild(table);
+                    } else {
+                        resultDiv.innerHTML = '<p class="mt-3">No history available for the selected date and browser.</p>';
+                    }
+                })
+                .catch(error => console.error('Error:', error));
         }
     </script>
 </body>
+
 </html>
