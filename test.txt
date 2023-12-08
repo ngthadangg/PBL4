@@ -1,5 +1,0 @@
-127.0.0.1 maps.google.com
-127.0.0.1 www.youtube.com/
-127.0.0.1 www.facebook.com/
-127.0.0.1 anonyviet.com/cach-chuyen-file-python-thanh-exe/
-127.0.0.1 www.messenger.com/

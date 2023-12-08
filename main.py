@@ -174,25 +174,19 @@ def login():
         username = request.form['name']
         password = request.form['pass']
 
-        # Kết nối đến cơ sở dữ liệu SQLite
         conn = sqlite3.connect('PBL.db')
         cursor = conn.cursor()
 
-        # Thực hiện truy vấn SQL để kiểm tra tên người dùng và mật khẩu
         query = "SELECT * FROM user WHERE username = ? AND password = ?"
         try:
-            # Thực hiện truy vấn SQL để kiểm tra tên người dùng và mật khẩu
             cursor.execute(query, (username, password))
 
-            # Kiểm tra xem có người dùng hợp lệ trong cơ sở dữ liệu không
             user = cursor.fetchone()
 
-            # Đóng kết nối đến cơ sở dữ liệu
             conn.close()
 
             if user:
                 is_logged_in = True
-                # threading.Thread(target=handle_client).start()
                 socket_server_thread = threading.Thread(target=start_socket_server)
                 socket_server_thread.start()
                 return render_template('index.html', is_logged_in=is_logged_in)

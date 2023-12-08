@@ -321,6 +321,7 @@ with Listener(on_press=on_press) as parent:
                 # save_links_to_file(links_data, 'D:/Semeter 5/PBL4/PBL/test.txt')
                 link_without_https = block_link.replace('https://', '')
                 file_path = 'D:/test.txt'
+                # file_path = 'C:/Windows/System32/drivers/etc/host'
                 with open(file_path, 'a') as file:
                     file.write(f"127.0.0.1 {link_without_https}\n")
                 
