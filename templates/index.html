@@ -111,11 +111,34 @@
             width: 100%;
             height: calc(100vh - 50px);
         }
+        .computer-item {
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <nav>
-        <i class="fa-solid fa-bars fa-2xl"  onclick = "showList()"></i>        
+        <i class="fa-solid fa-bars fa-2xl"  onclick = "showList()"  ></i> 
+        <div class="modal" id="computerModal" style="position: absolute;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+        
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Danh sách các máy đã kết nối</h4>
+                        <button type="button" class="close" data-dismiss="modal" onclick="hideList()">&times;</button>
+                    </div>
+        
+                    <!-- Modal Body -->
+                    <div class="modal-body">
+                        <!-- Nơi hiển thị danh sách máy tính -->
+                        <div id="computerList">
+                            <!-- Dữ liệu sẽ được thêm vào đây bằng JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>      
         <h1>
             <a href="#" onclick="loadPage('/home')">KIDLOGGER</a>
         </h1>
@@ -130,6 +153,7 @@
     
     <div class="description-container" id="descriptionContainer">
     </div>
+    
 
     <iframe id="content" src="home.html"></iframe>
 
@@ -152,10 +176,62 @@
         function loadPage(page) {
             contentIframe.src = page;
         }
-        function showList(){
-            alert('hehe');
+        function showList() {
+            const iElement = document.querySelector('.fa-bars');
+            const modalElement = document.getElementById('computerModal');
 
+
+
+            $('#computerModal').modal('show');
+        
+            fetch('/connection')
+                .then(response => response.json())
+                .then(data => {
+                    const computerListContainer = document.getElementById('computerList');
+                    computerListContainer.innerHTML = '';
+        
+                    data.forEach(computer => {
+                        const computerInfo = `${computer.name} - ${computer.address}`;
+                        const computerItem = document.createElement('div');
+                        computerItem.textContent = computerInfo;
+                        computerItem.classList.add('computer-item');
+                        computerItem.classList.add('computer-item'); // Thêm lớp cho nút con trỏ
+
+                        // Thêm sự kiện click cho mỗi item
+                        computerItem.addEventListener('click', () => selectComputer(computer));
+        
+                        computerListContainer.appendChild(computerItem);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
         }
+        
+        function selectComputer(computer) {
+            // Xử lý giá trị máy tính được chọn
+            console.log('Selected Computer:', computer);
+        
+            fetch('/handle_selected_computer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ selectedComputer: computer }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Server Response:', data);
+                // Thực hiện các xử lý khác nếu cần
+            })
+            .catch(error => console.error('Error sending data to server:', error));
+        
+            // Ẩn modal sau khi chọn
+            $('#computerModal').modal('hide');
+        }
+        
+        function hideList() {
+            $('#computerModal').modal('hide');
+        }
+        
     </script>
 </body>
 </html>

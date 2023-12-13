@@ -204,6 +204,40 @@ def home_router():
 def keylogger_router():
     return render_template('keylogger.html', data_received=data_received)
 
+@app.route('/connection')
+def connection_router():
+    conn = sqlite3.connect('PBL.db')
+    cursor = conn.cursor()
+    
+    query = "SELECT * FROM connect;"
+    
+    try:
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        # for row in rows:
+        #     print(row)
+            
+        computers = [{'name': row[0], 'address': row[1]} for row in rows]
+
+        conn.close()
+        
+        return jsonify(computers)
+
+    except  Exception as e:
+        return jsonify({'error': str(e)})
+
+@app.route('/handle_selected_computer', methods=['POST'])
+def handle_selected_computer():
+    selected_computer = request.json.get('selectedComputer')
+    
+    name = selected_computer.get('name', '')
+    address = selected_computer.get('address', '')
+
+
+    print("Selected Computer Name:", address)
+    print("Selected Computer IP:", name)   
+    return jsonify({'status': 'success'})
+
 @app.route('/remote-control',methods=['GET','POST'])
 def remote_router():   
     if request.method == 'POST':

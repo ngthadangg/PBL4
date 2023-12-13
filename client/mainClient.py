@@ -19,7 +19,7 @@ ref = db.reference('history')
 
 
 clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-serverParent = '192.168.1.5'
+serverParent = '192.168.1.7'
 serverPort = 8080
 
 
