@@ -10,8 +10,6 @@ from google.cloud import storage
 import firebase_admin
 from firebase_admin import credentials, storage, db
 
-# cred = credentials.Certificate("credentials.json")
-# firebase_admin.initialize_app(cred, {"storageBucket": "pbl4-09092003.appspot.com"})
 
 cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred, {
@@ -24,6 +22,9 @@ ref = db.reference('history')
 app = Flask(__name__)
 is_logged_in = False
 data_received = ""  
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+port = 8080
 
 
 def handle_client(client_socket,client_address):
@@ -97,8 +98,9 @@ def add_connection(address, name ):
         
 def start_socket_server():
     global client_socket
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    port = 8080
+    global server_socket
+    # server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # port = 8080
 
     try:
         server_socket.bind(('', port))
@@ -223,8 +225,6 @@ def connection_router():
     try:
         cursor.execute(query)
         rows = cursor.fetchall()
-        # for row in rows:
-        #     print(row)
             
         computers = [{'name': row[0], 'address': row[1]} for row in rows]
 
@@ -237,14 +237,24 @@ def connection_router():
 
 @app.route('/handle_selected_computer', methods=['POST'])
 def handle_selected_computer():
+    
+    global server_socket
+    
+    server_socket.close()
+
+
     selected_computer = request.json.get('selectedComputer')
     
     name = selected_computer.get('name', '')
     address = selected_computer.get('address', '')
 
+    server_socket.bind((address, port))
+
 
     print("Selected Computer Name:", address)
     print("Selected Computer IP:", name)   
+    
+    print("Server is listening on: ", server_socket, " port:", port)
     return jsonify({'status': 'success'})
 
 @app.route('/remote-control',methods=['GET','POST'])
@@ -361,21 +371,24 @@ def get_web_history_router():
     browser_type = request.form['browser_type']
     selected_date = request.form['selected_date']
     
-    if client_socket:
-        if (browser_type == "Chrome"):
-            client_socket.send('ChromeHistory'.encode('utf-8'))
-        elif (browser_type == "Edge"):
-            client_socket.send('EdgeHistory'.encode('utf-8'))
-
-
     # Tham chiếu đến thư mục ngày và loại trình duyệt
     date_ref = ref.child(selected_date)
     browser_ref = date_ref.child(f"{browser_type}History")
 
-    # Lấy dữ liệu từ Firebase
     history_data = browser_ref.get()
+    
+    if history_data:
+        return jsonify(history_data)
+    else:
+        if client_socket:
+            if (browser_type == "Chrome"):
+                client_socket.send('ChromeHistory'.encode('utf-8'))
+            elif (browser_type == "Edge"):
+                client_socket.send('EdgeHistory'.encode('utf-8'))
+        return jsonify(history_data)
 
-    return jsonify(history_data)
+
+
 @app.route('/web_block', methods=['GET', 'POST'])
 def web_block_router():
     if request.method == 'POST':
