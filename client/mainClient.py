@@ -19,7 +19,7 @@ ref = db.reference('history')
 
 
 clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-serverParent = '192.168.1.7'
+serverParent = '192.168.1.5'
 serverPort = 8080
 
 
@@ -261,7 +261,6 @@ def save_links_to_file(links, file_path):
 def totalTime():
 
     try:
-        # Lấy thời gian hiện tại
         now = datetime.now()
         current_date = now.strftime("%Y-%m-%d")
         current_hour = now.hour
@@ -316,12 +315,9 @@ with Listener(on_press=on_press) as parent:
             elif message == 'webBlock':
                 block_link = clientSocket.recv(1024).decode('utf-8')
                 print("Block link: " + block_link)
-                # links_data = get_link_from_database()
-                # save_links_to_file(links_data, 'C:/Windows/System32/drivers/etc/host')
-                # save_links_to_file(links_data, 'D:/Semeter 5/PBL4/PBL/test.txt')
                 link_without_https = block_link.replace('https://', '')
-                file_path = 'D:/test.txt'
-                # file_path = 'C:/Windows/System32/drivers/etc/host'
+                # file_path = 'D:/test.txt'
+                file_path = 'C:/Windows/System32/drivers/etc/host'
                 with open(file_path, 'a') as file:
                     file.write(f"127.0.0.1 {link_without_https}\n")
                 
