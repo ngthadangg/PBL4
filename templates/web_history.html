@@ -50,10 +50,18 @@
             padding: 8px;
             cursor: pointer;
         }
+        td.Title {
+            max-width: 100px;
+        }
 
         td.url {
-            word-wrap: break-word;
+            max-width: 500px; 
+            overflow: hidden;
+            text-overflow: ellipsis; /* Hiển thị dấu ba chấm (...) nếu nội dung bị cắt bớt */
+            white-space: nowrap; /* Ngăn chặn việc xuống dòng */
+            word-wrap: break-word; /* Cho phép cắt từ khi nội dung quá dài */
         }
+        
     </style>
 </head>
 
@@ -105,15 +113,12 @@
                         const thead = document.createElement('thead');
                         thead.classList.add('thead-light');
                         const trHead = document.createElement('tr');
-                        const thTime = document.createElement('th');
                         const thTitle = document.createElement('th');
                         const thUrl = document.createElement('th');
 
-                        thTime.textContent = 'Time';
                         thTitle.textContent = 'Title';
                         thUrl.textContent = 'URL';
 
-                        trHead.appendChild(thTime);
                         trHead.appendChild(thTitle);
                         trHead.appendChild(thUrl);
                         thead.appendChild(trHead);
@@ -122,7 +127,6 @@
                         const tbody = document.createElement('tbody');
                         data.forEach(item => {
                             const tr = document.createElement('tr');
-                            const tdTime = document.createElement('td');
                             const tdTitle = document.createElement('td');
                             const tdUrl = document.createElement('td');
                             const link = document.createElement('a');
@@ -131,14 +135,12 @@
                             link.href = item.url;
                             link.target = '_blank';
 
-                            tdTime.textContent = item.time;
                             tdTitle.textContent = item.title;
 
 
                             tdUrl.classList.add('url');
                             tdUrl.appendChild(link);
 
-                            tr.appendChild(tdTime);
                             tr.appendChild(tdTitle);
                             tr.appendChild(tdUrl);
                             tbody.appendChild(tr);

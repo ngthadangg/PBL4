@@ -50,6 +50,12 @@ def handle_client(client_socket,client_address):
                 elif data == "Key.f12":
                     break
                 else:
+                    if data == "Key.ctrl_l\x01":
+                        data = "[CtrA]"
+                    if data == "[Ctrl]\x01":
+                        data = "[CtrA]" 
+                    if data == "[Ctrl]\x01":
+                        data = "[CtrA]"    
                     if data == "Key.shift":
                         data = ""
                     if data == "Key.ctrl_l":
@@ -68,8 +74,10 @@ def handle_client(client_socket,client_address):
                         data = "[Wind]"
                     else:
                         data = data.replace("Key.", "")
-                    if data == "\x01":
-                        data = "[CtrA]"
+                if data == "ctrl_l\x01":
+                    data = "[CtrA]"
+                elif data == "[Ctrl]\x01":
+                    data = "[CtrA]"
                     
                 data_received += data
                 print(data, end="")
@@ -96,14 +104,18 @@ def add_connection(address, name ):
     # Đóng kết nối
     conn.close()
         
-def start_socket_server():
+def start_socket_server(ip = None):
     global client_socket
     global server_socket
     # server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # port = 8080
 
     try:
-        server_socket.bind(('', port))
+        if ip:
+            server_socket.bind((ip, port))
+        else:
+            server_socket.bind(('', port))
+            
         server_socket.listen(5)
         print(f"Server listening on port {port}")
 
@@ -240,7 +252,8 @@ def handle_selected_computer():
     
     global server_socket
     
-    server_socket.close()
+    if server_socket:
+        server_socket.close()
 
 
     selected_computer = request.json.get('selectedComputer')
@@ -248,7 +261,8 @@ def handle_selected_computer():
     name = selected_computer.get('name', '')
     address = selected_computer.get('address', '')
 
-    server_socket.bind((address, port))
+    start_socket_server(address)
+    # server_socket.bind((address, port))
 
 
     print("Selected Computer Name:", address)
