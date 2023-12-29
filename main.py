@@ -129,17 +129,25 @@ def start_socket_server(ip = None):
             except socket.herror:
                 print("Unable to get host name")   
 
-            # Tạo một luồng mới để xử lý kết nối của client
-            client_thread = threading.Thread(
-                target=handle_client,
-                args=(client_socket, client_address)
-            )
-            client_thread.start()
+            try:
+                # Tạo một luồng mới để xử lý kết nối của client
+                client_thread = threading.Thread(
+                    target=handle_client,
+                    args=(client_socket, client_address)
+                )
+                client_thread.start()
+
+                host_name = socket.gethostbyaddr(client_address[0])[0]
+                print(f"Host name: {host_name}")
+                add_connection(client_address[0], host_name)
+            except socket.herror:
+                print("Unable to get host name")
+
 
     except Exception as e:
         print(f"Server error: {str(e)}")
-    finally:
-        server_socket.close()
+    # finally:
+    #     server_socket.close()
 
 def get_screenshots_list():
     # Lấy tham chiếu đến bucket
@@ -261,7 +269,9 @@ def handle_selected_computer():
     name = selected_computer.get('name', '')
     address = selected_computer.get('address', '')
 
-    start_socket_server(address)
+    # start_socket_server(address)
+    socket_server_thread = threading.Thread(target=start_socket_server, args=(address,))
+    socket_server_thread.start()
     # server_socket.bind((address, port))
 
 
