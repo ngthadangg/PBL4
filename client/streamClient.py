@@ -1,29 +1,45 @@
-import socket
 import cv2
-import pyautogui
-import zlib
-import struct
-import numpy as np
+import socket
+import pickle
 
-UDP_IP = "192.168.1.5"
-UDP_PORT = 5005
+# Tạo socket UDP
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+# Địa chỉ và cổng của server
+server_address = ("192.168.1.13", 9999)
+
+# Kết nối tới server
+client_socket.sendto(b"connect_request", server_address)
+
+# Khởi tạo OpenCV để chụp video
+cap = cv2.VideoCapture(0)
+
+# Thiết lập kích thước gói tin UDP tối đa (số byte)
+UDP_MAX_SIZE = 65500
+
+buffer = []
 
 while True:
-    # Capture the screen
-    img = pyautogui.screenshot()
+    ret, frame = cap.read()
 
-    # Convert the screenshot to a numpy array
-    frame = np.array(img)
+    # Chuyển đổi frame thành dạng dữ liệu có thể truyền qua mạng
+    data = pickle.dumps(frame)
 
-    # Encode the frame
-    encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
-    result, imgencode = cv2.imencode('.jpg', frame, encode_param)
-    data = np.array(imgencode)
+    # Gửi dữ liệu theo từng phần nhỏ
+    while data:
+        if len(data) > UDP_MAX_SIZE:
+            fragment, data = data[:UDP_MAX_SIZE], data[UDP_MAX_SIZE:]
+        else:
+            fragment, data = data, b""
 
-    # Compress the data using zlib
-    compressed_data = zlib.compress(data, zlib.Z_BEST_COMPRESSION)
+        client_socket.sendto(fragment, server_address)
+        
+        cv2.imshow("Client", frame)
 
-    # Send the compressed data to the server
-    sock.sendto(compressed_data, (UDP_IP, UDP_PORT))
+
+    if cv2.waitKey(1) & 0xFF == ord("q"):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+client_socket.close()
