@@ -23,7 +23,7 @@ ref = db.reference('history')
 
 
 clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-serverParent = '192.168.1.5'
+serverParent = '192.168.1.13'
 serverPort = 8080
 
 email = input("Nhập email:")
@@ -40,6 +40,7 @@ try:
     conn.close()
     if not user:
         print( "Đăng nhập không thành công. Vui lòng kiểm tra lại email và mật khẩu.")
+        exit(1)
         
 except sqlite3.Error as e:
     print ("Failed to connect to database: ", e)
