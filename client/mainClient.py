@@ -1,3 +1,4 @@
+import getpass
 import pickle
 import sqlite3
 import struct
@@ -25,7 +26,24 @@ clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 serverParent = '192.168.1.5'
 serverPort = 8080
 
+email = input("Nhập email:")
+password = getpass.getpass("Nhập password:")
 
+conn = sqlite3.connect('PBL.db')
+cursor = conn.cursor()
+
+query = "SELECT * FROM user WHERE username = ? AND password = ?"
+try:
+    cursor.execute(query, (email, password))
+    user = cursor.fetchone()
+
+    conn.close()
+    if not user:
+        print( "Đăng nhập không thành công. Vui lòng kiểm tra lại email và mật khẩu.")
+        
+except sqlite3.Error as e:
+    print ("Failed to connect to database: ", e)
+    
 try:
     clientSocket.connect((serverParent, serverPort))
 except Exception as e:
