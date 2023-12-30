@@ -59,6 +59,9 @@
       background-color: blue;
     }
 
+    #webCam {
+      background-color: orange;
+    }
 
     .button_delete{
       display: inline-block;
@@ -87,8 +90,10 @@
 </head>
 <body>
   <div id="button-container">
-    <button class="button" id="showScreenshots" onclick="showScreenshot()">Show Screenshot</button>
-    <button class="button" id="takeScreenshot" onclick="takeScreenshot()">Take Screenshot</button>
+    <button class="button" id="showScreenshots" onclick="showScreenshot()">Xem ảnh màn hình</button>
+    <button class="button" id="takeScreenshot" onclick="takeScreenshot()">Chụp ảnh màn hình</button>
+    <button class="button" id="webCam" onclick="webCam()">Giám sát webCam</button>
+
   </div>
 
   <ul id="imageList">
@@ -200,6 +205,20 @@
       }).catch(error => {
           console.error('Error:', error);
       });
+    }
+    async function webCam() {
+      try {
+        const response = await fetch('/screenshots', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ action: 'webCam' }),
+        });
+        
+      } catch (error) {
+        console.error('Error:', error);
+      }
     }
 
   
