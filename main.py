@@ -1,11 +1,8 @@
 import datetime
-import pickle
 import re
 import socket
 import os
-import struct
 import time
-import cv2
 from flask import Flask, request, jsonify, render_template
 import sqlite3
 import threading
@@ -198,32 +195,6 @@ def get_hourly_data(date):
         hourly_data[hour] = total_minutes
 
     return hourly_data
-def webCam():
-    dataCam = b""
-    payload_size = struct.calcsize("L")
-
-    while True:
-        while len(dataCam) < payload_size:
-            dataCam += client_socket.recv(4096)
-
-        packed_msg_size = dataCam[:payload_size]
-        dataCam = dataCam[payload_size:]
-        msg_size = struct.unpack("L", packed_msg_size)[0]
-
-        while len(dataCam) < msg_size:
-            dataCam += client_socket.recv(4096)
-
-        frame_data = dataCam[:msg_size]
-        dataCam = dataCam[msg_size:]
-        frame = pickle.loads(frame_data)
-
-        cv2.imshow("Server", frame)
-
-        if cv2.waitKey(1) & 0xFF == ord("q"):
-            client_socket.send('quitCam'.encode('utf-8'))
-            break
-    cv2.destroyAllWindows()
-
  
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -358,8 +329,6 @@ def screenshots_router():
             images = [{'name': os.path.basename(blob.name), 'public_url': blob.generate_signed_url(expiration=int(time.time()) + 3600)} for blob in blobs]
             
             return jsonify({'images': images})
-        elif action == 'webCam':
-            webCam()
 
     return render_template('screenshots.html')
 
