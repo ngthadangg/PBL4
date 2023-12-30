@@ -230,6 +230,38 @@ def login():
         except Exception as e:
             return "Đã xảy ra lỗi: " + str(e)
     return render_template('login.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        email = request.form['registerEmail']
+        password = request.form['registerPass']
+
+        conn = sqlite3.connect('PBL.db')
+        cursor = conn.cursor()
+
+        # Kiểm tra xem người dùng đã tồn tại chưa
+        query_check_user = "SELECT * FROM user WHERE username = ?"
+        cursor.execute(query_check_user, (email,))
+        existing_user = cursor.fetchone()
+
+        if existing_user:
+            conn.close()
+            return "Người dùng đã tồn tại."
+
+        # Thêm người dùng mới vào cơ sở dữ liệu
+        query_insert_user = "INSERT INTO user (username, password) VALUES (?, ?)"
+        cursor.execute(query_insert_user, (email, password))
+        conn.commit()
+        conn.close()
+
+        # return "Đăng ký thành công. Bạn có thể đăng nhập bây giờ."
+        is_logged_in = True
+        socket_server_thread = threading.Thread(target=start_socket_server)
+        socket_server_thread.start()
+        return render_template('index.html', is_logged_in=is_logged_in)
+
+    return render_template('register.html')
 @app.route('/home.html')
 def home_router():
     return render_template('home.html')
